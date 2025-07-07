@@ -1,4 +1,5 @@
 import { VALID_NPSSO_LENGTH } from "@/constants/auth";
+import { verifyEmpty } from "@/utils/api";
 import { NextRequest, NextResponse } from "next/server";
 import {
   exchangeAccessCodeForAuthTokens,
@@ -7,13 +8,8 @@ import {
 
 export const GET = async (req: NextRequest) => {
   try {
-    const npsso = req.nextUrl.searchParams.get("npsso");
-
-    if (!npsso)
-      return NextResponse.json(
-        { message: "NPSSO must not be empty." },
-        { status: 400 }
-      );
+    const npsso = req.nextUrl.searchParams.get("npsso") as string;
+    verifyEmpty("NPSSO must not be empty.")
 
     if (npsso.length !== VALID_NPSSO_LENGTH)
       return NextResponse.json(

@@ -1,19 +1,6 @@
 import jwt from "jsonwebtoken";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { AuthTokensResponse } from "psn-api";
-
-export async function routeWithErrorHandling(
-  callback: (req: NextRequest) => Promise<NextResponse>
-) {
-  try {
-    return async (req: NextRequest) => await callback(req);
-  } catch (error) {
-    return NextResponse.json(
-      { message: (error as Error).message },
-      { status: 500 }
-    );
-  }
-}
 
 export function verifyEmpty(
   value: any,
@@ -31,3 +18,10 @@ export function isExpired({ idToken, expiresIn }: AuthTokensResponse) {
 
   return currentDate > expiryDate;
 }
+
+export const getTitleOptionsFromPlatform = (
+  platform: string
+): Partial<{ npServiceName: "trophy" }> => {
+  if (platform === "PS5") return {};
+  return { npServiceName: "trophy" };
+};

@@ -8,6 +8,7 @@ export const GET = async (req: NextRequest) => {
     verifyEmpty(accessToken);
 
     const response = await getUserTitles({ accessToken }, "me");
+    
     return NextResponse.json(response);
   } catch (error) {
     return NextResponse.json(
