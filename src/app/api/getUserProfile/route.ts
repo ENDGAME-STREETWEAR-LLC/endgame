@@ -4,7 +4,7 @@ import { getProfileFromUserName } from "psn-api";
 
 export const GET = async (req: NextRequest) => {
   try {
-    const accessToken = req.nextUrl.searchParams.get("accessToken") as string;
+    const accessToken = req.headers.get("authorization") as string;
     verifyEmpty(accessToken);
 
     const response = await getProfileFromUserName({ accessToken }, "me");

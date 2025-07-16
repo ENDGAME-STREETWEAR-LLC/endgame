@@ -1,27 +1,29 @@
-import { getTitleOptionsFromPlatform, verifyEmpty } from "@/utils/api";
+import { verifyEmpty } from "@/utils/api";
 import { NextRequest, NextResponse } from "next/server";
-import { getProfileFromUserName, getTitleTrophies } from "psn-api";
+import { getTitleTrophies } from "psn-api";
 
 export const GET = async (req: NextRequest) => {
   try {
-    const accessToken = req.nextUrl.searchParams.get("accessToken") as string;
+    const accessToken = req.headers.get("authorization") as string;
     verifyEmpty(accessToken);
+
+    const npCommunicationId = req.nextUrl.searchParams.get(
+      "npCommunicationId"
+    ) as string;
+    verifyEmpty(npCommunicationId, "NP Service Name must not be empty");
 
     const npServiceName = req.nextUrl.searchParams.get(
       "npServiceName"
     ) as string;
-    verifyEmpty(npServiceName, "NP Service Name must not be empty");
-
-    const platform = req.nextUrl.searchParams.get("platform") as string;
-    verifyEmpty(platform, "Platform must not be empty");
-
-    const options = getTitleOptionsFromPlatform(platform);
+    verifyEmpty(npServiceName, "Platform must not be empty");
 
     const response = await getTitleTrophies(
       { accessToken },
-      npServiceName,
+      npCommunicationId,
       "all",
-      options
+      {
+        npServiceName: npServiceName as "trophy" | "trophy2",
+      }
     );
     return NextResponse.json(response);
   } catch (error) {

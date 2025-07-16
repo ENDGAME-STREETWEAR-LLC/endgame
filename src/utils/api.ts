@@ -19,9 +19,30 @@ export function isExpired({ idToken, expiresIn }: AuthTokensResponse) {
   return currentDate > expiryDate;
 }
 
-export const getTitleOptionsFromPlatform = (
-  platform: string
-): Partial<{ npServiceName: "trophy" }> => {
-  if (platform === "PS5") return {};
-  return { npServiceName: "trophy" };
+export const Endpoints = Object.freeze({
+  AccessToken: `${process.env.API_URL}/api/getAccessToken`,
+  UserProfile: `${process.env.API_URL}/api/getUserProfile`,
+  UserTitles: `${process.env.API_URL}/api/getUserTitles`,
+  TitleTrophies: `${process.env.API_URL}/api/geTitleTrophies`,
+  RefreshToken: `${process.env.API_URL}/api/refreshToken`,
+});
+
+type Endpoint = (typeof Endpoints)[keyof typeof Endpoints];
+
+export const fetcher = async (
+  endpoint: Endpoint | [Endpoint, string],
+  options: RequestInit
+) => {
+  let url: string;
+  if (typeof endpoint === "string") {
+    url = endpoint;
+  } else {
+    url = endpoint[0] + endpoint[1];
+  }
+  const response = await fetch(url, options);
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message);
+
+  return data;
 };

@@ -1,41 +1,26 @@
 "use client";
 
-import MainMenu from "@/components/MainMenu";
 import PSNAuth from "@/components/PSNAuth";
-import { isExpired } from "@/utils/api";
 import Image from "next/image";
-import { AuthTokensResponse } from "psn-api";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
-  const [authorization, setAuthorization] = useState<AuthTokensResponse>();
-
-  // To be used in the future when refreshing 
-  const refreshTokenHandler = async () => {
-    try {
-      const response = await fetch(
-        `/api/refreshToken?refreshToken=${authorization?.refreshToken}`
-      );
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.message);
-      setAuthorization(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const router = useRouter();
 
   const submitNpssoHandler = async (npsso: string) => {
     try {
-      const url = "/api/getAccessToken?npsso=" + npsso;
+      setLoading(true);
+      const url = `/api/getAccessToken?npsso=${npsso}`;
       const response = await fetch(url);
       const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.message);
       }
-      setAuthorization(data);
+      document.cookie = `authorization=${JSON.stringify(data)}`
+      router.replace("/home")
     } catch (error) {
       console.error(error);
     } finally {
@@ -44,12 +29,9 @@ export default function Home() {
   };
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        {!authorization && !loading && (
-          <PSNAuth onSubmit={submitNpssoHandler} />
-        )}
-        {authorization && <MainMenu authorization={authorization} />}
+    <>
+      <div className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+        {!loading && <PSNAuth onSubmit={submitNpssoHandler} />}
         {loading && <p>In progress...</p>}
         <Image
           className="dark:invert"
@@ -59,7 +41,7 @@ export default function Home() {
           height={38}
           priority
         />
-      </main>
+      </div>
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
         <a
           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
@@ -107,6 +89,6 @@ export default function Home() {
           Go to nextjs.org →
         </a>
       </footer>
-    </div>
+    </>
   );
 }

@@ -4,7 +4,7 @@ import { exchangeRefreshTokenForAuthTokens } from "psn-api";
 
 export const GET = async (req: NextRequest) => {
   try {
-    const refreshToken = req.nextUrl.searchParams.get("refreshToken") as string;
+    const refreshToken = req.headers.get("authorization") as string;
     verifyEmpty(refreshToken);
 
     const newAuthorization = await exchangeRefreshTokenForAuthTokens(
