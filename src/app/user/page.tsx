@@ -1,4 +1,4 @@
-import { Endpoints, fetcher } from "@/utils/api";
+import { PsnEndpoints, fetcher } from "@/utils/api";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { ProfileFromUserNameResponse } from "psn-api";
@@ -9,7 +9,7 @@ export default async function User() {
     cookieStore.get("authorization")?.value as string
   );
 
-  const data = (await fetcher(Endpoints.UserProfile, {
+  const data = (await fetcher(PsnEndpoints.UserProfile, {
     headers: {
       Authorization: authorization.accessToken,
     },

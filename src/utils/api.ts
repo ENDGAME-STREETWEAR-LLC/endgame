@@ -19,19 +19,27 @@ export function isExpired({ idToken, expiresIn }: AuthTokensResponse) {
   return currentDate > expiryDate;
 }
 
-export const Endpoints = Object.freeze({
-  AccessToken: `${process.env.API_URL}/api/getAccessToken`,
-  UserProfile: `${process.env.API_URL}/api/getUserProfile`,
-  UserTitles: `${process.env.API_URL}/api/getUserTitles`,
-  TitleTrophies: `${process.env.API_URL}/api/geTitleTrophies`,
-  RefreshToken: `${process.env.API_URL}/api/refreshToken`,
+export const PsnEndpoints = Object.freeze({
+  AccessToken: `${process.env.API_URL}/api/psn/getAccessToken`,
+  UserProfile: `${process.env.API_URL}/api/psn/getUserProfile`,
+  UserTitles: `${process.env.API_URL}/api/psn/getUserTitles`,
+  TitleTrophies: `${process.env.API_URL}/api/psn/getTitleTrophies`,
+  RefreshToken: `${process.env.API_URL}/api/psn/refreshToken`,
 });
 
-type Endpoint = (typeof Endpoints)[keyof typeof Endpoints];
+type PsnEndpoint = (typeof PsnEndpoints)[keyof typeof PsnEndpoints];
+
+export const XboxEndpoints = Object.freeze({
+  Auth: `${process.env.API_URL}/api/xbox/auth`,
+});
+
+type XboxEndpoint = (typeof XboxEndpoints)[keyof typeof XboxEndpoints];
+
+type Endpoint = PsnEndpoint | XboxEndpoint;
 
 export const fetcher = async (
   endpoint: Endpoint | [Endpoint, string],
-  options: RequestInit
+  options?: RequestInit
 ) => {
   let url: string;
   if (typeof endpoint === "string") {

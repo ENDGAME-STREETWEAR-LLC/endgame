@@ -1,6 +1,7 @@
 "use client";
 
 import PSNAuth from "@/components/PSNAuth";
+import { PsnEndpoints, fetcher } from "@/utils/api";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -12,15 +13,10 @@ export default function Home() {
   const submitNpssoHandler = async (npsso: string) => {
     try {
       setLoading(true);
-      const url = `/api/getAccessToken?npsso=${npsso}`;
-      const response = await fetch(url);
-      const data = await response.json();
+      const data = await fetcher([PsnEndpoints.AccessToken, `?npsso=${npsso}`]);
 
-      if (!response.ok) {
-        throw new Error(data.message);
-      }
-      document.cookie = `authorization=${JSON.stringify(data)}`
-      router.replace("/home")
+      document.cookie = `authorization=${JSON.stringify(data)}`;
+      router.replace("/home");
     } catch (error) {
       console.error(error);
     } finally {

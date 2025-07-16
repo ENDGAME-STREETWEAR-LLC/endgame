@@ -1,4 +1,4 @@
-import { Endpoints, fetcher } from "@/utils/api";
+import { PsnEndpoints, fetcher } from "@/utils/api";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { TitleTrophiesResponse, UserTitlesResponse } from "psn-api";
@@ -9,7 +9,7 @@ export default async function Games() {
     cookieStore.get("authorization")?.value as string
   );
 
-  const titlesData = (await fetcher(Endpoints.UserTitles, {
+  const titlesData = (await fetcher(PsnEndpoints.UserTitles, {
     headers: {
       Authorization: authorization.accessToken,
     },
@@ -20,7 +20,7 @@ export default async function Games() {
       async (title) =>
         (await fetcher(
           [
-            Endpoints.TitleTrophies,
+            PsnEndpoints.TitleTrophies,
             `?npCommunicationId=${title.npCommunicationId}&npServiceName=${title.npServiceName}`,
           ],
           {
