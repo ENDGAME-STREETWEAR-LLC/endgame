@@ -8,7 +8,7 @@ export const GET = async (req: NextRequest) => {
     verifyEmpty(accessToken);
 
     const response = await getProfileFromUserName({ accessToken }, "me");
-    return NextResponse.json(response.profile);
+    return NextResponse.json(response);
   } catch (error) {
     console.log("error",error)
     return NextResponse.json(

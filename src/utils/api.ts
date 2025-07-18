@@ -20,17 +20,17 @@ export function isExpired({ idToken, expiresIn }: AuthTokensResponse) {
 }
 
 export const PsnEndpoints = Object.freeze({
-  AccessToken: `${process.env.API_URL}/api/psn/getAccessToken`,
-  UserProfile: `${process.env.API_URL}/api/psn/getUserProfile`,
-  UserTitles: `${process.env.API_URL}/api/psn/getUserTitles`,
-  TitleTrophies: `${process.env.API_URL}/api/psn/getTitleTrophies`,
-  RefreshToken: `${process.env.API_URL}/api/psn/refreshToken`,
+  AccessToken: `${process.env.NEXT_PUBLIC_API_URL}/api/psn/getAccessToken`,
+  UserProfile: `${process.env.NEXT_PUBLIC_API_URL}/api/psn/getUserProfile`,
+  UserTitles: `${process.env.NEXT_PUBLIC_API_URL}/api/psn/getUserTitles`,
+  TitleTrophies: `${process.env.NEXT_PUBLIC_API_URL}/api/psn/getTitleTrophies`,
+  RefreshToken: `${process.env.NEXT_PUBLIC_API_URL}/api/psn/refreshToken`,
 });
 
 type PsnEndpoint = (typeof PsnEndpoints)[keyof typeof PsnEndpoints];
 
 export const XboxEndpoints = Object.freeze({
-  Auth: `${process.env.API_URL}/api/xbox/auth`,
+  Auth: `${process.env.NEXT_PUBLIC_API_URL}/api/xbox/auth`,
 });
 
 type XboxEndpoint = (typeof XboxEndpoints)[keyof typeof XboxEndpoints];
@@ -48,9 +48,8 @@ export const fetcher = async (
     url = endpoint[0] + endpoint[1];
   }
   const response = await fetch(url, options);
-
   const data = await response.json();
-  if (!response.ok) throw new Error(data.message);
 
+  if (!response.ok) throw new Error(data.message);
   return data;
 };

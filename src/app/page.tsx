@@ -15,11 +15,10 @@ export default function Home() {
       setLoading(true);
       const data = await fetcher([PsnEndpoints.AccessToken, `?npsso=${npsso}`]);
 
-      document.cookie = `authorization=${JSON.stringify(data)}`;
-      router.replace("/home");
+      document.cookie = `psn_session=${JSON.stringify(data)}`;
+      router.replace("/psn/home");
     } catch (error) {
       console.error(error);
-    } finally {
       setLoading(false);
     }
   };
@@ -28,7 +27,7 @@ export default function Home() {
     <>
       <div className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         {!loading && <PSNAuth onSubmit={submitNpssoHandler} />}
-        {loading && <p>In progress...</p>}
+        {loading && <p>Loading...</p>}
         <Image
           className="dark:invert"
           src="/next.svg"

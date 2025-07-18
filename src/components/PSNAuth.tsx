@@ -1,7 +1,7 @@
 "use client";
 
 import { NPSSO_URL, PSN_AUTH_URL } from "@/constants/auth";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useState } from "react";
 
 type PSNAuthProps = {
   onSubmit?: (npsso: string) => void;
@@ -9,10 +9,6 @@ type PSNAuthProps = {
 
 export default function PSNAuth({ onSubmit = () => {} }: PSNAuthProps) {
   const [npsso, setNpsso] = useState("");
-
-  useEffect(() => {
-    console.log("npsso channged", npsso);
-  }, [npsso]);
 
   const changeNpssoHandler = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => setNpsso(event.target.value),
