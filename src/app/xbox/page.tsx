@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export default async function XboxPage({
@@ -42,7 +43,8 @@ export default async function XboxPage({
 
   const data = await response.json();
 
-  document.cookie = `xbox_session=${JSON.stringify(data)}`;
+  const storedCookies = await cookies();
+  storedCookies.set("xbox_session", JSON.stringify(data));
 
   return redirect("/xbox/home");
 }
