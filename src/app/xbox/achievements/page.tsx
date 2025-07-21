@@ -1,8 +1,7 @@
 import { cookies } from "next/headers";
 import { XBLAuthBody } from "types";
 
-// Configuración importante - coloca estos valores en tus variables de entorno
-const XBOX_API_KEY = "c4a1fcac-49ef-4427-afae-e5dd85122381"
+const XBOX_API_KEY = process.env.XBOX_API_KEY;
 
 async function fetchXboxAchievements(xuid: string) {
   const url = `https://xbl.io/api/v2/achievements/player/${xuid}`;
@@ -11,13 +10,13 @@ async function fetchXboxAchievements(xuid: string) {
     const response = await fetch(url, {
       headers: {
         "Content-Type": "application/json",
-        "X-Authorization": XBOX_API_KEY as string,
+        "x-authorization": process.env.XBOX_API_KEY as string,
       },
       next: { revalidate: 3600 }, // Cache los resultados por 1 hora
     });
 
     if (!response.ok) {
-      throw new Error(`Xbox API Error: ${response.status}`);
+      throw new Error(`Xbox API Error: ${response.statusText}`);
     }
 
     return await response.json();
@@ -37,12 +36,14 @@ export default async function XboxAchievements() {
   }
 
   const storedCookies = await cookies();
+  console.log("xbox session", storedCookies.get("xbox_session"));
   const storedSession = storedCookies.get("xbox_session")?.value as string;
 
   if (!storedSession)
     return <div className="p-4 text-red-600">Error: Missing Xbox User ID</div>;
 
   const { xuid } = JSON.parse(storedSession) as XBLAuthBody;
+  console.log("xuid", xuid);
 
   const achievementsData = await fetchXboxAchievements(xuid);
 

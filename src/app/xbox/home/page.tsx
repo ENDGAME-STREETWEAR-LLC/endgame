@@ -1,5 +1,5 @@
 import XboxMainMenu from "@/components/XboxMainMenu";
 
-export default function Home() {
+export default async function Home() {
   return <XboxMainMenu />;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import PSNAuth from "@/components/PSNAuth";
+import XboxAuth from "@/components/XboxAuth";
 import { PsnEndpoints, fetcher } from "@/utils/api";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -26,7 +27,12 @@ export default function Home() {
   return (
     <>
       <div className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        {!loading && <PSNAuth onSubmit={submitNpssoHandler} />}
+        {!loading && (
+          <>
+            <PSNAuth onSubmit={submitNpssoHandler} />
+            <XboxAuth />
+          </>
+        )}
         {loading && <p>Loading...</p>}
         <Image
           className="dark:invert"
