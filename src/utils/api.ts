@@ -50,6 +50,9 @@ export const fetcher = async (
   const response = await fetch(url, options);
   const data = await response.json();
 
-  if (!response.ok) throw new Error(data.message);
+  if (!response.ok) {
+    console.log("Fetcher error", data, response.statusText);
+    throw new Error(data.message);
+  }
   return data;
 };

@@ -1,6 +1,5 @@
 import { PsnEndpoints, fetcher } from "@/utils/api";
 import { cookies } from "next/headers";
-import Image from "next/image";
 import Link from "next/link";
 import { TitleTrophiesResponse, UserTitlesResponse } from "psn-api";
 
@@ -47,12 +46,6 @@ export default async function Games() {
         <div>
           <p>Title name: {title?.trophyTitleName}</p>
           <p>Icon:</p>
-          <img
-            width={60}
-            height={60}
-            src={title?.trophyTitleIconUrl}
-            alt={title?.trophyTitleName}
-          />
           <p>Title Detail: {title?.trophyTitleDetail}</p>
           <p>Title Trophy progress: {title?.progress}</p>
           <p>
@@ -73,12 +66,6 @@ export default async function Games() {
                 <p>Name: {trophy?.trophyName}</p>
                 <p>Detail: {trophy?.trophyDetail}</p>
                 <p>Icon:</p>
-                <img
-                  width={60}
-                  height={60}
-                  src={trophy?.trophyIconUrl}
-                  alt={trophy?.trophyName}
-                />
                 <p>Type: {trophy?.trophyType}</p>
                 <p>Is Secret: {trophy?.trophyHidden}</p>
               </span>
