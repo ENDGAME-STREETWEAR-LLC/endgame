@@ -1,7 +1,12 @@
 import { PsnEndpoints, fetcher } from "@/utils/api";
 import { cookies } from "next/headers";
 import Link from "next/link";
-import { TitleTrophiesResponse, UserTitlesResponse } from "psn-api";
+import {
+  TitleThinTrophy,
+  UserTitlesResponse,
+  UserTrophiesBySpecificTitleResponse,
+} from "psn-api";
+import { Fragment } from "react";
 
 export default async function Games() {
   const storedCookies = await cookies();
@@ -35,7 +40,7 @@ export default async function Games() {
               Authorization: authorization.accessToken,
             },
           }
-        )) as TitleTrophiesResponse
+        )) as TitleThinTrophy[]
     )
   );
 
@@ -43,35 +48,35 @@ export default async function Games() {
     <>
       <Link href="/psn/home">Back to home</Link>
       {titlesData?.trophyTitles?.map((title, index) => (
-        <div>
-          <p>Title name: {title?.trophyTitleName}</p>
-          <p>Icon:</p>
-          <p>Title Detail: {title?.trophyTitleDetail}</p>
-          <p>Title Trophy progress: {title?.progress}</p>
-          <p>
-            Defined trophies: {JSON.stringify(title?.definedTrophies || "")}
-          </p>
-          <p>Earned Trophies: {JSON.stringify(title?.earnedTrophies || "")}</p>
-          <p>
-            Last updated time:{" "}
-            {new Date(title?.lastUpdatedDateTime || "").toDateString()}
-          </p>
-          <p>Title Platform: {title?.trophyTitlePlatform}</p>
-          <p>Has trophy groups: {title?.hasTrophyGroups}</p>
-          <p>Trophy set version: {title?.trophySetVersion}</p>
-          <p>Trophies:</p>
-          {trophiesData?.at(index)?.trophies?.map((trophy) => {
-            return (
-              <span key={trophy?.trophyId}>
-                <p>Name: {trophy?.trophyName}</p>
-                <p>Detail: {trophy?.trophyDetail}</p>
-                <p>Icon:</p>
-                <p>Type: {trophy?.trophyType}</p>
-                <p>Is Secret: {trophy?.trophyHidden}</p>
-              </span>
-            );
-          })}
-        </div>
+        <Fragment key={title.npCommunicationId + index}>
+          <div className="bg-[rgb(40,40,40)]">
+            <p>Title name: {title?.trophyTitleName}</p>
+            <p>Title Detail: {title?.trophyTitleDetail}</p>
+            <p>Title Trophy progress: {title?.progress}</p>
+            <p>Total Trophies: {JSON.stringify(title?.earnedTrophies || "")}</p>
+            <p>
+              Last updated time:{" "}
+              {new Date(title?.lastUpdatedDateTime || "").toDateString()}
+            </p>
+            <p>Title Platform: {title?.trophyTitlePlatform}</p>
+            <p>Has trophy groups: {title?.hasTrophyGroups}</p>
+            <p>Trophy set version: {title?.trophySetVersion}</p>
+            <p>Earned Trophies:</p>
+            <br></br>
+            {trophiesData?.at(index)?.map((trophy) => {
+              return (
+                <span key={trophy?.trophyId}>
+                  <p>Name: {trophy?.trophyName}</p>
+                  <p>Detail: {trophy?.trophyDetail}</p>
+                  <p>Type: {trophy?.trophyType}</p>
+                  <p>Is Secret: {JSON.stringify(trophy?.trophyHidden)}</p>
+                  <br></br>
+                </span>
+              );
+            })}
+          </div>
+          <br></br>
+        </Fragment>
       ))}
     </>
   );
