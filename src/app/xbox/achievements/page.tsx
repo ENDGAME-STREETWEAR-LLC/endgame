@@ -1,22 +1,21 @@
 import { cookies } from "next/headers";
 import { XBLAuthBody } from "types";
+import { Curl } from "node-libcurl";
+import { fetcher, XboxEndpoints } from "@/utils/api";
 
 const XBOX_API_KEY = process.env.XBOX_API_KEY;
 
 async function fetchXboxAchievements(xuid: string) {
-  const url = `https://xbl.io/api/v2/achievements/player/${xuid}`;
-
   try {
-    const response = await fetch(url, {
-      headers: {
-        "Content-Type": "application/json",
-        "x-authorization": process.env.XBOX_API_KEY as string,
-      },
-      next: { revalidate: 3600 }, // Cache los resultados por 1 hora
-    });
+    const response = await fetcher([
+      XboxEndpoints.Achievements,
+      `?xuid=${xuid}`,
+    ]);
+
+    const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(`Xbox API Error: ${response.statusText}`);
+      throw new Error(data.message);
     }
 
     return await response.json();

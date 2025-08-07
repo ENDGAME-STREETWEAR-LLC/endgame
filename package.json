@@ -4,15 +4,19 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "express": "node express.js",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "net": "^1.0.2",
     "next": "15.3.4",
+    "node-libcurl": "^4.1.0",
     "psn-api": "^2.14.0",
     "pxs-psn-api": "^2.0.0",
     "react": "^19.0.0",
@@ -21,6 +25,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
