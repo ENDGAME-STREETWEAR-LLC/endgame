@@ -18,12 +18,17 @@ app.get("/express/achievements", async (req, res) => {
   const { data, statusCode } = await curly.get(
     `https://xbl.io/api/v2/achievements/player/${xuid}`,
     {
-      httpHeader: [`x-authorization: ${XBOX_API_KEY}`, "Accept: application/json"],
+      httpHeader: [
+        `x-authorization: ${XBOX_API_KEY}`,
+        "Accept: application/json",
+      ],
     }
   );
   return res.status(statusCode).json(data);
 });
 
-app.listen(3000, () => {
-  console.log("Express server listening on port: 3000");
+const PORT = process.env.PORT || 8000;
+
+app.listen(() => {
+  console.log("Express server listening on port:", PORT);
 });

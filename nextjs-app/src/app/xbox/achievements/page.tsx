@@ -1,6 +1,5 @@
 import { cookies } from "next/headers";
 import { XBLAuthBody } from "types";
-import { Curl } from "node-libcurl";
 import { fetcher, XboxEndpoints } from "@/utils/api";
 
 const XBOX_API_KEY = process.env.XBOX_API_KEY;

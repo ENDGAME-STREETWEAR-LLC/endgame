@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (Array.isArray(body)) {
-      for (let cookie of body) {
+      for (const cookie of body) {
         storedCookies.set(cookie?.name, cookie?.value);
       }
     } else {

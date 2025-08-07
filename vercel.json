@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "express-app/express.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "nextjs-app/package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/express/(.*)",
+      "dest": "packages/express-app/express.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
