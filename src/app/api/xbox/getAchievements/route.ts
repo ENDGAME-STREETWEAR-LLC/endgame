@@ -7,14 +7,14 @@ export async function GET(req: NextRequest) {
     verifyEmpty(xuid, "XUID must not be empty");
 
     const response = await fetch(
-      `${process.env.EXPRESS_URL}/express/achievements?xuid=${xuid}`
+      `${process.env.EXPRESS_URL}/achievements?xuid=${xuid}`
     );
 
     const data = await response.json();
 
     if (!response.ok) {
       return NextResponse.json(
-        { message: data.message },
+        { message: data },
         { status: response.status }
       );
     }

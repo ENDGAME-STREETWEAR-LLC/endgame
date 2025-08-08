@@ -1,3 +1,5 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+
 import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 import { AuthTokensResponse } from "psn-api";
