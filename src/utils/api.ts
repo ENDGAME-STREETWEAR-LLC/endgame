@@ -38,7 +38,13 @@ export const XboxEndpoints = Object.freeze({
 
 type XboxEndpoint = (typeof XboxEndpoints)[keyof typeof XboxEndpoints];
 
-type Endpoint = PsnEndpoint | XboxEndpoint;
+export const SteamEndpoints = Object.freeze({
+  Profile: `${process.env.NEXT_PUBLIC_API_URL}/api/steam/getProfile`,
+});
+
+type SteamEndpoint = (typeof SteamEndpoints)[keyof typeof SteamEndpoints];
+
+type Endpoint = PsnEndpoint | XboxEndpoint | SteamEndpoint;
 
 export const fetcher = async (
   endpoint: Endpoint | [Endpoint, string],

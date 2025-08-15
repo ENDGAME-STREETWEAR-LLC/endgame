@@ -1,6 +1,9 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+
+import { fetcher, XboxEndpoints } from "@/utils/api";
+import { formatObjectJSON } from "@/utils/text";
 import { cookies } from "next/headers";
 import { XBLAuthBody } from "types";
-import { fetcher, XboxEndpoints } from "@/utils/api";
 
 async function fetchXboxAchievements(xuid: string) {
   try {
@@ -34,12 +37,20 @@ export default async function XboxAchievements() {
   }
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Xbox Live Achievements</h1>
+    <div className="p-4 flex flex-col h-full w-full">
+      <h1 className="text-2xl font-bold">Xbox Live Achievements</h1>
 
-      <div className="mb-4">
-        <p>Player: {achievementsData.xuid}</p>
-        <p>Titles: {JSON.stringify(achievementsData.titles)}</p>
+      <div>
+        <p>Player: {xuid}</p>
+        <p>Titles:</p>
+        {achievementsData.map((title: any, index: number) => (
+          <div className="mt-4" key={title.titleId + index}>
+            {formatObjectJSON(title).map((text) => (
+              <p key={text}>{text}</p>
+            ))}
+            <br></br>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -4,3 +4,19 @@ export const NPSSO_URL = "https://ca.account.sony.com/api/v1/ssocookie";
 export const XBOX_AUTH_URL =
   "https://xbl.io/app/auth/" + process.env.NEXT_PUBLIC_XBOX_APP_KEY;
 export const VALID_NPSSO_LENGTH = 64;
+
+const WEBSITE_URL = process.env.NEXT_PUBLIC_API_URL || "";
+
+const STEAM_OPENID_AUTH_PARAMS = {
+  "openid.ns": "http://specs.openid.net/auth/2.0",
+  "openid.mode": "checkid_setup",
+  "openid.return_to": `${WEBSITE_URL}/steam`,
+  "openid.realm": WEBSITE_URL,
+  "openid.identity": "http://specs.openid.net/auth/2.0/identifier_select",
+  "openid.claimed_id": "http://specs.openid.net/auth/2.0/identifier_select",
+};
+
+const URL_PARAMS = new URLSearchParams(STEAM_OPENID_AUTH_PARAMS);
+
+export const STEAM_AUTH_URL =
+  "http://steamcommunity.com/openid/login?" + URL_PARAMS.toString();

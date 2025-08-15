@@ -1,6 +1,7 @@
 "use client";
 
 import PSNAuth from "@/components/PSNAuth";
+import SteamAuth from "@/components/SteamAuth";
 import XboxAuth from "@/components/XboxAuth";
 import { PsnEndpoints, fetcher } from "@/utils/api";
 import Image from "next/image";
@@ -31,6 +32,7 @@ export default function Home() {
           <>
             <PSNAuth onSubmit={submitNpssoHandler} />
             <XboxAuth />
+            <SteamAuth />
           </>
         )}
         {loading && <p>Loading...</p>}
