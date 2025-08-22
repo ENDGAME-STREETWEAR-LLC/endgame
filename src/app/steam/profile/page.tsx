@@ -1,10 +1,11 @@
 import { cookies } from "next/headers";
 import { fetcher, SteamEndpoints } from "@/utils/api";
+import { formatObjectJSON } from "@/utils/text";
 
 async function fetchSteamProfile(userId: string) {
   try {
     const data = await fetcher([SteamEndpoints.Profile, `?userId=${userId}`]);
-    return data;
+    return data.response.players[0];
   } catch (error) {
     console.error("Error fetching achievements:", error);
     return null;
@@ -30,12 +31,18 @@ export default async function SteamProfile() {
   }
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Steam Profile Info</h1>
+    <div className="p-4 h-full">
+      <h1 className="text-2xl font-bold mb-4">Steam Games Info</h1>
 
       <div className="mb-4">
         <p>Player: {steamId}</p>
-        <p>Titles: {JSON.stringify(profileData)}</p>
+        <p>Profile:</p>
+        <div className="mt-4">
+          {formatObjectJSON(profileData).map((text) => (
+            <p key={text}>{text}</p>
+          ))}
+          <br></br>
+        </div>
       </div>
     </div>
   );

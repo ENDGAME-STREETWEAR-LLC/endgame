@@ -40,6 +40,7 @@ type XboxEndpoint = (typeof XboxEndpoints)[keyof typeof XboxEndpoints];
 
 export const SteamEndpoints = Object.freeze({
   Profile: `${process.env.NEXT_PUBLIC_API_URL}/api/steam/getProfile`,
+  Games: `${process.env.NEXT_PUBLIC_API_URL}/api/steam/getGames`,
 });
 
 type SteamEndpoint = (typeof SteamEndpoints)[keyof typeof SteamEndpoints];
