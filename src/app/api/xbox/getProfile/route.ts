@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
     verifyEmpty(xuid, "XUID must not be empty");
 
     const response = await fetch(
-      `${process.env.EXPRESS_URL}/xbox/achievements?xuid=${xuid}`
+      `${process.env.EXPRESS_URL}/xbox/profile?xuid=${xuid}`
     );
 
     const data = await response.json();

@@ -34,6 +34,7 @@ type PsnEndpoint = (typeof PsnEndpoints)[keyof typeof PsnEndpoints];
 export const XboxEndpoints = Object.freeze({
   Auth: `${process.env.NEXT_PUBLIC_API_URL}/api/xbox/auth`,
   Achievements: `${process.env.NEXT_PUBLIC_API_URL}/api/xbox/getAchievements`,
+  Profile: `${process.env.NEXT_PUBLIC_API_URL}/api/xbox/getProfile`,
 });
 
 type XboxEndpoint = (typeof XboxEndpoints)[keyof typeof XboxEndpoints];

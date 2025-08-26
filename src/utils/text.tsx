@@ -5,7 +5,7 @@ export function formatObjectJSON(object: Record<any, any>) {
 
   const entries = Object.entries(object);
   entries.forEach(([key, value]) => {
-    const string = `${key.at(0)?.toUpperCase() + key.slice(1)}: ${value}`;
+    const string = `${key.at(0)?.toUpperCase() + key.slice(1)}: ${JSON.stringify(value)}`;
     stringArray.push(string);
   });
 
