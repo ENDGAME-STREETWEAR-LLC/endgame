@@ -4,7 +4,7 @@ import { XBOX_AUTH_URL } from "@/constants/auth";
 
 export default function XboxAuth() {
   return (
-    <div>
+    <div className="flex flex-col items-center justify-center gap-[1rem]">
       <a
         target="_self"
         href={XBOX_AUTH_URL}

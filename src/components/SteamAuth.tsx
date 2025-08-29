@@ -4,7 +4,7 @@ import { STEAM_AUTH_URL } from "@/constants/auth";
 
 export default function SteamAuth() {
   return (
-    <div>
+    <div className="flex flex-col items-center justify-center gap-[1rem]">
       <a
         target="_self"
         href={STEAM_AUTH_URL}

@@ -37,7 +37,7 @@ export default async function XboxAchievements() {
   }
 
   return (
-    <div className="p-4 flex flex-col h-full w-full">
+    <div className="p-4 flex flex-col h-full w-screen">
       <h1 className="text-2xl font-bold">Xbox Live Profile</h1>
 
       <div>

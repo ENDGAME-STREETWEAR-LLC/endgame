@@ -4,7 +4,6 @@ import Link from "next/link";
 import {
   TitleThinTrophy,
   UserTitlesResponse,
-  UserTrophiesBySpecificTitleResponse,
 } from "psn-api";
 import { Fragment } from "react";
 

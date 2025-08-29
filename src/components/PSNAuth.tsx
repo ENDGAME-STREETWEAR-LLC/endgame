@@ -21,7 +21,7 @@ export default function PSNAuth({ onSubmit = () => {} }: PSNAuthProps) {
   );
 
   return (
-    <div>
+    <div className="flex flex-col items-center justify-center gap-[1rem]">
       <a
         target="_blank"
         href={PSN_AUTH_URL}
@@ -35,6 +35,7 @@ export default function PSNAuth({ onSubmit = () => {} }: PSNAuthProps) {
         </button>
       </a>
       <input
+        className="bg-[#FFFFFF33] rounded-full p-2"
         type="text"
         placeholder="Enter NPSSO..."
         onChange={changeNpssoHandler}

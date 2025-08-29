@@ -1,6 +1,5 @@
 import { PsnEndpoints, fetcher } from "@/utils/api";
 import { cookies } from "next/headers";
-import Image from "next/image";
 import Link from "next/link";
 import { ProfileFromUserNameResponse } from "psn-api";
 

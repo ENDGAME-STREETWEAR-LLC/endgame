@@ -43,14 +43,7 @@ export default async function XboxAchievements() {
       <div>
         <p>Player: {xuid}</p>
         <p>Titles:</p>
-        {achievementsData.map((title: any, index: number) => (
-          <div className="mt-4" key={title.titleId + index}>
-            {formatObjectJSON(title).map((text) => (
-              <p key={text}>{text}</p>
-            ))}
-            <br></br>
-          </div>
-        ))}
+        {JSON.stringify(achievementsData)}
       </div>
     </div>
   );

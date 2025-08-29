@@ -5,7 +5,21 @@ export function formatObjectJSON(object: Record<any, any>) {
 
   const entries = Object.entries(object);
   entries.forEach(([key, value]) => {
-    const string = `${key.at(0)?.toUpperCase() + key.slice(1)}: ${JSON.stringify(value)}`;
+    let formattedValue;
+    if (Array.isArray(value)) {
+      formattedValue = value.map((item) => {
+        if (typeof item !== "object") return JSON.stringify(item);
+        return formatObjectJSON(item);
+      });
+    } else if (typeof value === "object") {
+      formattedValue = formatObjectJSON(value);
+    } else {
+      formattedValue = JSON.stringify(value);
+    }
+
+    const string = `${
+      key.at(0)?.toUpperCase() + key.slice(1)
+    }: ${formattedValue}`;
     stringArray.push(string);
   });
 
