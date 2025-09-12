@@ -1,8 +1,12 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## [ENDGAME PORTAL](https://endgame-portal.vercel.app/)
+
+This project contains the source code for the ENDGAME web portal, which uses Next.JS, Typescript and Tailwind CSS.
 
 ## Getting Started
 
-First, run the development server:
+First, configure your environment variables to start the development server. See the .env.example file for reference.
+
+Run the express server app, or use the hosted Express Deployment. Then, run the development server:
 
 ```bash
 npm run dev
@@ -14,23 +18,20 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result and start using the web app locally.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## PSN Authentication
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To authenticate using PSN, first enter the Playstation Network page and sign in using your email and password. After signing in, visit the link in the home page to retrieve the NPSSO token for your account. Enter the token and click on the submit button.
 
-## Learn More
+## Xbox Live Authentication
 
-To learn more about Next.js, take a look at the following resources:
+Currently, the Xbox Live features are only available on the Vercel Deployment. Visit the URL in the description section of the repository page to use these features. You'll need to sign in using a Microsoft account with an Xbox profile associated to it.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Steam Authentication
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Click on the Sign in with Steam button to authenticate using your Steam account. You'll need to confirm your identity through the Steam page everytime you wish to sign in.
 
-## Deploy on Vercel
+## DISCLAIMER
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+None of your personal information will be stored or shared with anyone. All the data accessed from your account will merely be used to provide our services and offer our products to you as a user of our website.
