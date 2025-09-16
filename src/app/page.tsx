@@ -4,7 +4,6 @@ import PSNAuth from "@/components/PSNAuth";
 import SteamAuth from "@/components/SteamAuth";
 import XboxAuth from "@/components/XboxAuth";
 import { PsnEndpoints, fetcher } from "@/utils/api";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -17,6 +16,7 @@ export default function Home() {
       setLoading(true);
       const data = await fetcher([PsnEndpoints.AccessToken, `?npsso=${npsso}`]);
 
+      // TODO add expiry time for session cookies
       document.cookie = `psn_session=${JSON.stringify(data)}`;
       router.replace("/psn/home");
     } catch (error) {

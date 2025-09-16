@@ -2,6 +2,7 @@ import { PsnEndpoints, fetcher } from "@/utils/api";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { ProfileFromUserNameResponse } from "psn-api";
+import { PSNAuthSession } from "types";
 
 export default async function User() {
   const storedCookies = await cookies();
@@ -14,7 +15,7 @@ export default async function User() {
       </div>
     );
 
-  const authorization = JSON.parse(storedSession);
+  const authorization = JSON.parse(storedSession) as PSNAuthSession;
 
   const data = (await fetcher(PsnEndpoints.UserProfile, {
     headers: {

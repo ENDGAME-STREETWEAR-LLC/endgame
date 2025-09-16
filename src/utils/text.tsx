@@ -1,5 +1,10 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
+/**
+ * Function to format objects parsed from JSON data
+ * @param object Any object that can be stringified into JSON format
+ * @returns An array of strings, each item containing a formatted object entry
+ */
 export function formatObjectJSON(object: Record<any, any>) {
   const stringArray: string[] = [];
 

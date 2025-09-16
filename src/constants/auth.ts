@@ -1,12 +1,35 @@
+// Constants file for Auth flows
+
+/**
+ * Official PSN Sign In URL.
+ */
 export const PSN_AUTH_URL =
   "https://my.account.sony.com/sonyacct/signin/?duid=0000000700090100b0229371f5293f73515435a930e4c48b9c932691e71b76434365315588daf745&response_type=code&client_id=e4a62faf-4b87-4fea-8565-caaabb3ac918&scope=web%3Acore&access_type=offline&state=de9fc4c781d9a763b14164e0ae9a916259b8d72b983d26ed395113e1571dea72&service_entity=urn%3Aservice-entity%3Apsn&ui=pr&smcid=web%3Apdc&redirect_uri=https%3A%2F%2Fweb.np.playstation.com%2Fapi%2Fsession%2Fv1%2Fsession%3Fredirect_uri%3Dhttps%253A%252F%252Fio.playstation.com%252Fcentral%252Fauth%252Flogin%253Flocale%253Des_MX%2526postSignInURL%253Dhttps%25253A%25252F%25252Fwww.playstation.com%25252Fes-mx%25252F%2526cancelURL%253Dhttps%25253A%25252F%25252Fwww.playstation.com%25252Fes-mx%25252F%26x-psn-app-ver%3D%2540sie-ppr-web-session%252Fsession%252Fv5.40.7&auth_ver=v3&error=login_required&error_code=4165&error_description=User+is+not+authenticated&no_captcha=true&cid=372b878f-e7a1-47e1-8824-c0974b54d2e3#/signin/input/id";
+
+/**
+ * URL to retrieve NPSSO Token from signed in PSN account.
+ */
 export const NPSSO_URL = "https://ca.account.sony.com/api/v1/ssocookie";
-export const XBOX_AUTH_URL =
-  "https://xbl.io/app/auth/" + process.env.NEXT_PUBLIC_XBOX_APP_KEY;
+
+/**
+ * Valid length for NPSSO Token. Used for verifying validity of token.
+ */
 export const VALID_NPSSO_LENGTH = 64;
 
+/**
+ * Authentication URL for Xbox Live.
+ */
+export const XBOX_AUTH_URL =
+  "https://xbl.io/app/auth/" + process.env.NEXT_PUBLIC_XBOX_APP_KEY;
+
+/**
+ * URL of the ENDGAME website, must be the base URL without the trailing slash '/'.
+ */
 const WEBSITE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
+/**
+ * Authentication params used to sign in through Steam using the official OpenID provider.
+ */
 const STEAM_OPENID_AUTH_PARAMS = {
   "openid.ns": "http://specs.openid.net/auth/2.0",
   "openid.mode": "checkid_setup",
@@ -16,7 +39,13 @@ const STEAM_OPENID_AUTH_PARAMS = {
   "openid.claimed_id": "http://specs.openid.net/auth/2.0/identifier_select",
 };
 
+/**
+ * URL Query Params built from the Authentication Params Object.
+ */
 const URL_PARAMS = new URLSearchParams(STEAM_OPENID_AUTH_PARAMS);
 
+/**
+ * Full Steam Authentication URL containing the stringified query params.
+ */
 export const STEAM_AUTH_URL =
   "http://steamcommunity.com/openid/login?" + URL_PARAMS.toString();

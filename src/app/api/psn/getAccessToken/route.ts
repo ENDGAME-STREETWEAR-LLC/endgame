@@ -9,7 +9,7 @@ import {
 export const GET = async (req: NextRequest) => {
   try {
     const npsso = req.nextUrl.searchParams.get("npsso") as string;
-    verifyEmpty("NPSSO must not be empty.")
+    verifyEmpty(npsso, "NPSSO must not be empty.");
 
     if (npsso.length !== VALID_NPSSO_LENGTH)
       return NextResponse.json(

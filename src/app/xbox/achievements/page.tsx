@@ -1,13 +1,16 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 import { fetcher, XboxEndpoints } from "@/utils/api";
-import { formatObjectJSON } from "@/utils/text";
 import { cookies } from "next/headers";
-import { XBLAuthBody } from "types";
+import { XBLAchievementsData, XBLAuthSession } from "types";
+import Link from "next/link";
 
 async function fetchXboxAchievements(xuid: string) {
   try {
-    const data = await fetcher([XboxEndpoints.Achievements, `?xuid=${xuid}`]);
+    const data = (await fetcher([
+      XboxEndpoints.Achievements,
+      `?xuid=${xuid}`,
+    ])) as XBLAchievementsData;
     return data;
   } catch (error) {
     console.error("Error fetching achievements:", error);
@@ -17,14 +20,12 @@ async function fetchXboxAchievements(xuid: string) {
 
 export default async function XboxAchievements() {
   const storedCookies = await cookies();
-  console.log("xbox session", storedCookies.get("xbox_session"));
   const storedSession = storedCookies.get("xbox_session")?.value as string;
 
   if (!storedSession)
     return <div className="p-4 text-red-600">Error: Missing Xbox User ID</div>;
 
-  const { xuid } = JSON.parse(storedSession) as XBLAuthBody;
-  console.log("xuid", xuid);
+  const { xuid } = JSON.parse(storedSession) as XBLAuthSession;
 
   const achievementsData = await fetchXboxAchievements(xuid);
 
@@ -38,6 +39,7 @@ export default async function XboxAchievements() {
 
   return (
     <div className="p-4 flex flex-col h-full w-full">
+      <Link href="/xbox/home">Back to home</Link>
       <h1 className="text-2xl font-bold">Xbox Live Achievements</h1>
 
       <div>

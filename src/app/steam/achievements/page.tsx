@@ -3,13 +3,15 @@
 import { cookies } from "next/headers";
 import { fetcher, SteamEndpoints } from "@/utils/api";
 import { formatObjectJSON } from "@/utils/text";
+import { SteamAchievementsData, SteamAuthSession } from "types";
+import Link from "next/link";
 
 async function fetchSteamAchievements(userId: string) {
   try {
-    const data = await fetcher([
+    const data = (await fetcher([
       SteamEndpoints.Achievements,
       `?userId=${userId}`,
-    ]);
+    ])) as SteamAchievementsData;
     return data.response;
   } catch (error) {
     console.error("Error fetching achievements:", error);
@@ -19,7 +21,7 @@ async function fetchSteamAchievements(userId: string) {
 
 export default async function SteamProfile() {
   const storedCookies = await cookies();
-  const steamId = storedCookies.get("steam_session")?.value as string;
+  const steamId = storedCookies.get("steam_session")?.value as SteamAuthSession;
 
   if (!steamId)
     return <div className="p-4 text-red-600">Error: Missing Steam User ID</div>;
@@ -41,6 +43,7 @@ export default async function SteamProfile() {
 
   return (
     <div className="p-4 h-full">
+      <Link href="/steam/home">Back to home</Link>
       <h1 className="text-2xl font-bold mb-4">Steam Achievements Info</h1>
 
       <div className="mb-4">
@@ -48,7 +51,7 @@ export default async function SteamProfile() {
 
         <p>Game count: {achievementsData.game_count}</p>
         <p>Achievements:</p>
-        {achievementsData.games.map((game: any) => {
+        {achievementsData.games.map((game) => {
           return (
             <div className="mt-4" key={game.id}>
               {formatObjectJSON(game).map((text) => (

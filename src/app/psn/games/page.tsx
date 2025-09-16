@@ -1,11 +1,9 @@
 import { PsnEndpoints, fetcher } from "@/utils/api";
 import { cookies } from "next/headers";
 import Link from "next/link";
-import {
-  TitleThinTrophy,
-  UserTitlesResponse,
-} from "psn-api";
+import { TitleThinTrophy, UserTitlesResponse } from "psn-api";
 import { Fragment } from "react";
+import { PSNAuthSession } from "types";
 
 export default async function Games() {
   const storedCookies = await cookies();
@@ -18,7 +16,7 @@ export default async function Games() {
       </div>
     );
 
-  const authorization = JSON.parse(storedSession);
+  const authorization = JSON.parse(storedSession) as PSNAuthSession;
 
   const titlesData = (await fetcher(PsnEndpoints.UserTitles, {
     headers: {
