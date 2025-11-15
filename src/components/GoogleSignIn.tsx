@@ -18,20 +18,21 @@ export default function GoogleSignIn() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      console.log(session?.user.user_metadata.name);
     });
     return () => subscription.unsubscribe();
   }, []);
   if (!session) {
     return (
       <Auth
-        //onlyThirdPartyProviders
-        //providers={["google"]}
+        onlyThirdPartyProviders
+        providers={["google"]}
         redirectTo="http://localhost:3000/auth/callback"
         supabaseClient={supabase}
         appearance={{ theme: ThemeSupa }}
       />
     );
   } else {
-    return <MainApp />;
+    return <MainApp session={session} />;
   }
 }

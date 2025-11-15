@@ -1,108 +1,66 @@
-import { OrderInput, OrderOptions } from "@/models/shopify";
-import { createAdminApiClient } from "@shopify/admin-api-client";
+import { ProductNode } from "@/models/shopify";
 
-const key = process.env.SHOPIFY_ACCESS_KEY;
-const domain = process.env.SHOPIFY_DOMAIN;
+export type ShopifyInput = {
+  id: string
+  name: string;
+  email: string;
+  phone: string;
+  title: string;
+  price: number;
+  quantity: number;
+  image: string;
+};
 
-if (!key) {
-  throw new Error("Missing .env variable: SHOPIFY_ACCESS_KEY");
-}
-
-if (!domain) {
-  throw new Error("Missing .env variable: SHOPIFY_DOMAIN");
-}
-
-const client = createAdminApiClient({
-  storeDomain: domain,
-  apiVersion: "2025-10",
-  accessToken: key,
-});
+export type ProductSearchParams = {
+  id?: string;
+  title?: string;
+};
 
 export default function useShopify() {
   return {
-    createOrder: async () => {
-      const order: OrderInput = {
-        test: true,
-        lineItems: [
-          {
-            priceSet: {
-              shopMoney: {
-                amount: 10,
-                currencyCode: "USD",
-              },
-              presentmentMoney: {
-                amount: 10,
-                currencyCode: "USD",
-              },
-            },
-            quantity: 1,
-            requiresShipping: true,
-            title: "Test item",
-          },
-        ],
-      };
+    createOrder: async (input: ShopifyInput) => {
+      try {
+        const response = await fetch("/api/shopify", {
+          method: "POST",
+          body: JSON.stringify(input),
+        });
 
-      //Options for order
-      const options: OrderOptions = {
-        sendFulfillmentReceipt: true,
-        sendReceipt: true,
-      };
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message);
+        }
 
-      //Mutation for creating the order in shopify
-      const newOrder = await client.request(
-        `mutation OrderCreate($order: OrderCreateOrderInput!, $options: OrderCreateOptionsInput) {
-      orderCreate(order: $order, options: $options) {
-        userErrors {
-          field
-          message
-        }
-        order {
-          id
-          totalTaxSet {
-            shopMoney {
-              amount
-              currencyCode
-            }
-          }
-          lineItems(first: 5) {
-            nodes {
-              variant {
-                id
-              }
-              id
-              title
-              quantity
-              taxLines {
-                title
-                rate
-                priceSet {
-                  shopMoney {
-                    amount
-                    currencyCode
-                  }
-                }
-              }
-            }
-          }
-        }
+        return data;
+      } catch (error) {
+        throw error;
       }
-    }`,
-        {
-          variables: {
-            order,
-            options,
-          },
+    },
+
+    getProducts: async (query?: ProductSearchParams) => {
+      try {
+        let params = new URLSearchParams();
+
+        if (query?.title) {
+          params.set("title", query.title);
         }
-      );
 
-      if (newOrder.errors) {
-        throw new Error(
-          newOrder.errors.message + ". " + newOrder.errors.graphQLErrors?.at(0)
-        );
+        if (query?.id) {
+          params.set("id", query.id);
+        }
+
+        let url = "/api/shopify?" + params.toString();
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message);
+        }
+
+        return data as { node: ProductNode }[];
+      } catch (error) {
+        throw error;
       }
-      console.log(newOrder.data.orderCreate);
-
-      return newOrder;
     },
   };
 }

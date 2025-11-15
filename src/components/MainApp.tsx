@@ -1,33 +1,35 @@
-import { fetcher, PsnEndpoints } from "@/utils/api";
+import { Session } from "@supabase/supabase-js";
+import ShopItem from "./ShopItem";
+import useShopify from "@/hooks/useShopify";
+import { ProductNode } from "@/models/shopify";
+import { useEffect, useState } from "react";
 
-const GamingServices = {
-  Playstation: "playstation",
-  Xbox: "xbox",
-  Steam: "steam",
-};
+export default function MainApp({ session }: { session: Session }) {
+  const shopify = useShopify();
+  const [products, setProducts] = useState<null | { node: ProductNode }[]>();
 
-export default function MainApp() {
-  const syncAchievementsHandler = async (
-    service: keyof typeof GamingServices
-  ) => {
-    switch (service) {
-      case "Playstation":
-        break;
-      case "Xbox":
-        break;
-      case "Steam":
-        break;
-    }
-  };
+  useEffect(() => {
+    new Promise(async () => {
+      const products = await shopify.getProducts();
+      console.log("products", products);
+      setProducts(products);
+    });
+  }, []);
 
   return (
-    <div>
-      <header>
-        <h1>Sync achievements</h1>
-        {Object.keys(GamingServices).map((key) => (
-          <button key={key}>Sync {key} achievements</button>
+    <div className="flex justify-center w-full">
+      <section className="grid grid-cols-3 gap-5">
+        {products?.map(({ node }) => (
+          <ShopItem
+            id={node.variants.nodes[0].id}
+            key={node.title}
+            title={node.title}
+            image={node.media.nodes[0].preview.image.url}
+            price={node.priceRangeV2?.minVariantPrice?.amount as number}
+            session={session}
+          />
         ))}
-      </header>
+      </section>
     </div>
   );
 }
