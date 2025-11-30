@@ -1,20 +1,70 @@
-import Link from "next/link";
+"use client";
+
+import { XBOX_AUTH_URL } from "@/constants/auth";
+import useGamingServices from "@/hooks/useGamingServices";
+import { Services } from "@/types";
+import { formatObjectJSON } from "@/utils/text";
+import { CircleLoader } from "react-spinners";
 
 export default function XboxMainMenu() {
+  const [loading, error, sync, data, authState] = useGamingServices();
+
   return (
     <div className="w-full h-full justify-center items-center flex flex-col gap-[1rem]">
-      <Link
-        href={"/xbox/profile"}
-        className="cursor-pointer rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-      >
-        View user profile
-      </Link>
-      <Link
-        href={"/xbox/achievements"}
-        className="cursor-pointer rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-      >
-        View user achievements
-      </Link>
+      {/** Render message if user is logged out of XBL network */}
+      {!loading && !authState.xbl && (
+        <>
+          <p>You are currently logged out of XBL Network.</p>
+          <a
+            target="_self"
+            href={XBOX_AUTH_URL}
+            className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
+          >
+            Log into XBL network
+          </a>
+        </>
+      )}
+
+      {/** Render components for loading and error states */}
+      {loading && <CircleLoader color="white" />}
+      {error && <p>{error}</p>}
+
+      {/** Render message if user has no data in sync yet for their XBL account  */}
+      {!loading && !error && authState.xbl && !data.xbl && (
+        <>
+          <p>No data is in sync yet.</p>
+        </>
+      )}
+
+      {/** Render synced content for logged in XBL account */}
+      {!loading && !error && data.xbl && (
+        <>
+          <p>XBL User Info</p>
+          <p>Name: {data.xbl.profile.id}</p>
+
+          <div className="flex w-full justify-evenly">
+            <div className="w-[300px] h-[300px] overflow-x-scroll bg-[#FFFFFF33] p-2 rounded-sm">
+              <p>Earned achievements:</p>
+              {JSON.stringify(data.xbl.achievements)}
+            </div>
+
+            <div className="w-[300px] h-[300px] overflow-x-scroll bg-[#FFFFFF33] p-2 rounded-sm">
+              <p>Profile Data:</p>
+              {JSON.stringify(data.xbl.profile)}
+            </div>
+          </div>
+        </>
+      )}
+
+      {authState.xbl && (
+        <button
+          disabled={loading}
+          onClick={() => sync(Services.XBL)}
+          className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
+        >
+          Sync data for XBL account
+        </button>
+      )}
     </div>
   );
 }
