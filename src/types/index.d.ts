@@ -1,4 +1,40 @@
 declare module "types" {
+  export enum Services {
+    PSN,
+    XBL,
+    Steam,
+  }
+
+  export interface PSNData {
+    profile: ProfileFromUserNameResponse;
+    titles: UserTitlesResponse;
+    trophies: { [x: string]: TitleThinTrophy[] }[];
+  }
+
+  export interface XBLData {
+    profile: XBLProfileData;
+    achievements: XBLAchievementsData;
+  }
+
+  export interface SteamData {
+    profile: SteamProfileData;
+    games: SteamGamesData;
+    achievements: SteamAchievementsData;
+  }
+
+  export interface GamingServicesData {
+    psn: null | PSNData;
+    xbl: null | XBLData;
+    steam: null | SteamData;
+  }
+
+  export type GamingServicesHook = [
+    boolean,
+    string,
+    (service: Services) => void,
+    GamingServicesData
+  ];
+
   /**
    * PSN Auth Session stored inside the browser's cookies, containing an authorization object for the signed in user.
    */

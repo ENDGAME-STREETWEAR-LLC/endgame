@@ -184,7 +184,7 @@ export const POST = async (req: NextRequest) => {
     );
 
     if (invoiceRequest.errors) {
-      console.error("newOrder errors", invoiceRequest.errors.graphQLErrors);
+      console.error("invoiceRequest errors", invoiceRequest.errors.graphQLErrors);
       throw new Error(
         invoiceRequest.errors.message +
           ". " +
