@@ -3,6 +3,7 @@
 import { STEAM_AUTH_URL } from "@/constants/auth";
 import useGamingServices from "@/hooks/useGamingServices";
 import { Services } from "@/types";
+import { formatObjectJSON } from "@/utils/text";
 import { CircleLoader } from "react-spinners";
 
 export default function SteamMainMenu() {
@@ -42,7 +43,35 @@ export default function SteamMainMenu() {
       {!loading && !error && data.steam && (
         <>
           <p>Steam User Info</p>
-          <p>{data.steam.profile.response.players[0].personaname}</p>
+          <p>Name: {data.steam.profile.response.players[0].personaname}</p>
+          <p>Total owned games: {data.steam.games.response.game_count}</p>
+
+          <div className="flex w-full justify-evenly">
+            <div className="w-[300px] h-[300px] overflow-x-scroll bg-[#FFFFFF33] p-2 rounded-sm">
+              <p>Achievements:</p>
+              {data.steam.achievements.response.games.map((game) => {
+                return (
+                  <div className="mt-4" key={game.id}>
+                    {formatObjectJSON(game).map((text) => (
+                      <p key={text}>{text}</p>
+                    ))}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="w-[300px] h-[300px] overflow-x-scroll bg-[#FFFFFF33] p-2 rounded-sm">
+              <p>Owned Games:</p>
+              {data.steam.games.response.games.map((game, index) => (
+                <div className="mt-4" key={game.appid + index}>
+                  {formatObjectJSON(game).map((text) => (
+                    <p key={text}>{text}</p>
+                  ))}
+                  <br></br>
+                </div>
+              ))}
+            </div>
+          </div>
         </>
       )}
 

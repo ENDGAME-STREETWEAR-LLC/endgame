@@ -38,7 +38,7 @@ export default function useShopify() {
 
     getProducts: async (query?: ProductSearchParams) => {
       try {
-        let params = new URLSearchParams();
+        const params = new URLSearchParams();
 
         if (query?.title) {
           params.set("title", query.title);
@@ -48,7 +48,7 @@ export default function useShopify() {
           params.set("id", query.id);
         }
 
-        let url = "/api/shopify?" + params.toString();
+        const url = "/api/shopify?" + params.toString();
 
         const response = await fetch(url);
         const data = await response.json();

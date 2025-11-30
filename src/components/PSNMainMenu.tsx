@@ -4,6 +4,7 @@ import { NPSSO_URL, PSN_AUTH_URL } from "@/constants/auth";
 import useGamingServices from "@/hooks/useGamingServices";
 import { Services } from "@/types";
 import { fetcher, PsnEndpoints } from "@/utils/api";
+import { formatObjectJSON } from "@/utils/text";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useCallback, useState } from "react";
 import { CircleLoader } from "react-spinners";
@@ -76,10 +77,36 @@ export default function PSNMainMenu() {
       )}
 
       {/** Render synced content for logged in PSN account */}
-      {!loading && !error && data.psn && (
+      {!loading && !error && authState.psn && data.psn && (
         <>
           <p>PSN User Info</p>
-          <p>{data.psn.profile.onlineId}</p>
+          <p>Name: {data.psn.profile.onlineId}</p>
+
+          <div className="flex w-full justify-evenly">
+            <div className="w-[300px] h-[300px] overflow-x-scroll bg-[#FFFFFF33] p-2 rounded-sm">
+              <p>Earned trophies:</p>
+              {data.psn.trophies.map((trophy, index) => (
+                <div className="mt-4" key={index}>
+                  {formatObjectJSON(trophy).map((text) => (
+                    <p key={text}>{text}</p>
+                  ))}
+                  <br></br>
+                </div>
+              ))}
+            </div>
+
+            <div className="w-[300px] h-[300px] overflow-x-scroll bg-[#FFFFFF33] p-2 rounded-sm">
+              <p>Owned Titles:</p>
+              {data.psn.titles.trophyTitles.map((title, index) => (
+                <div className="mt-4" key={title.npServiceName + index}>
+                  {formatObjectJSON(title).map((text) => (
+                    <p key={text}>{text}</p>
+                  ))}
+                  <br></br>
+                </div>
+              ))}
+            </div>
+          </div>
         </>
       )}
 

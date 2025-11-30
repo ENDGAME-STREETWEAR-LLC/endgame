@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthContextProvider } from "@/hooks/useAuthStore";
 import { GamingServicesContextProvider } from "@/hooks/useGamingServices";
 import { cookies } from "next/headers";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,16 +45,16 @@ export default async function RootLayout({
               <nav>
                 <ul className="flex gap-4 bg-[#FFFFFF33] m-2 p-4">
                   <li className="hover:opacity-30">
-                    <a href="/">Home</a>
+                    <Link href="/">Home</Link>
                   </li>
                   <li className="hover:opacity-30">
-                    <a href="/psn/home">Playstation</a>
+                    <Link href="/psn/home">Playstation</Link>
                   </li>
                   <li className="hover:opacity-30">
-                    <a href="/xbox/home">Xbox</a>
+                    <Link href="/xbox/home">Xbox</Link>
                   </li>
                   <li className="hover:opacity-30">
-                    <a href="/steam/home">Steam</a>
+                    <Link href="/steam/home">Steam</Link>
                   </li>
                 </ul>
               </nav>

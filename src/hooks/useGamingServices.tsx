@@ -1,3 +1,5 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+
 "use client";
 
 import {
@@ -6,7 +8,6 @@ import {
   SteamEndpoints,
   XboxEndpoints,
 } from "@/utils/api";
-import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import {
   ProfileFromUserNameResponse,
   TitleThinTrophy,
@@ -189,7 +190,7 @@ export default function useGamingServices(): GamingServicesHook {
 
     try {
       setLoading(true);
-      
+
       const profile = (await fetcher([
         SteamEndpoints.Profile,
         `?userId=${userId}`,

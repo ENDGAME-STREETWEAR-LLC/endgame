@@ -3,6 +3,7 @@
 import { XBOX_AUTH_URL } from "@/constants/auth";
 import useGamingServices from "@/hooks/useGamingServices";
 import { Services } from "@/types";
+import { formatObjectJSON } from "@/utils/text";
 import { CircleLoader } from "react-spinners";
 
 export default function XboxMainMenu() {
@@ -39,7 +40,19 @@ export default function XboxMainMenu() {
       {!loading && !error && data.xbl && (
         <>
           <p>XBL User Info</p>
-          <p>{data.xbl.profile.id}</p>
+          <p>Name: {data.xbl.profile.id}</p>
+
+          <div className="flex w-full justify-evenly">
+            <div className="w-[300px] h-[300px] overflow-x-scroll bg-[#FFFFFF33] p-2 rounded-sm">
+              <p>Earned achievements:</p>
+              {JSON.stringify(data.xbl.achievements)}
+            </div>
+
+            <div className="w-[300px] h-[300px] overflow-x-scroll bg-[#FFFFFF33] p-2 rounded-sm">
+              <p>Profile Data:</p>
+              {JSON.stringify(data.xbl.profile)}
+            </div>
+          </div>
         </>
       )}
 
