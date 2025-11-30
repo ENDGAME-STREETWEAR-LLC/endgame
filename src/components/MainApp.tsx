@@ -1,17 +1,17 @@
-import { Session } from "@supabase/supabase-js";
 import ShopItem from "./ShopItem";
 import useShopify from "@/hooks/useShopify";
 import { ProductNode } from "@/models/shopify";
 import { useEffect, useState } from "react";
+import useAuthStore from "@/hooks/useAuthStore";
 
-export default function MainApp({ session }: { session: Session }) {
+export default function MainApp() {
+  const session = useAuthStore();
   const shopify = useShopify();
   const [products, setProducts] = useState<null | { node: ProductNode }[]>();
 
   useEffect(() => {
     new Promise(async () => {
       const products = await shopify.getProducts();
-      console.log("products", products);
       setProducts(products);
     });
   }, []);

@@ -2,7 +2,7 @@
 
 import { fetcher, XboxEndpoints } from "@/utils/api";
 import { cookies } from "next/headers";
-import { XBLAchievementsData, XBLAuthSession } from "types";
+import { XBLAchievementsData, XBLAuthSession } from "@/types";
 import Link from "next/link";
 
 async function fetchXboxAchievements(xuid: string) {

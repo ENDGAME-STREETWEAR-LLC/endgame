@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import { fetcher, SteamEndpoints } from "@/utils/api";
 import { formatObjectJSON } from "@/utils/text";
-import { SteamAchievementsData, SteamAuthSession } from "types";
+import { SteamAchievementsData, SteamAuthSession } from "@/types";
 import Link from "next/link";
 
 async function fetchSteamAchievements(userId: string) {

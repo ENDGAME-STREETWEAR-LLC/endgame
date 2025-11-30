@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { SteamAuthSession, XBLAuthSession } from "types";
+import { SteamAuthSession, XBLAuthSession } from "@/types";
 
 /**
  * Request matchers for middleware function

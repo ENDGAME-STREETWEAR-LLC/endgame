@@ -4,7 +4,7 @@ import { fetcher, XboxEndpoints } from "@/utils/api";
 import { formatObjectJSON } from "@/utils/text";
 import { cookies } from "next/headers";
 import Link from "next/link";
-import { XBLAuthSession, XBLProfileData } from "types";
+import { XBLAuthSession, XBLProfileData } from "@/types";
 
 async function fetchXboxProfile(xuid: string) {
   try {

@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { fetcher, SteamEndpoints } from "@/utils/api";
 import { formatObjectJSON } from "@/utils/text";
-import { SteamAuthSession, SteamProfileData } from "types";
+import { SteamAuthSession, SteamProfileData } from "@/types";
 import Link from "next/link";
 
 async function fetchSteamProfile(userId: string) {
