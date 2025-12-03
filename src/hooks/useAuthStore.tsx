@@ -1,14 +1,18 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+
 "use client";
 
 import { createContext, PropsWithChildren, useContext } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { Session } from "@supabase/supabase-js";
+import { Session, SupabaseClient } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { CircleLoader } from "react-spinners";
 
-export const AuthContext = createContext<null | Session>(null);
+export const AuthContext = createContext<[Session, SupabaseClient]>(
+  null as any
+);
 
 export const AuthContextProvider = (props: PropsWithChildren) => {
   const supabase = createClient();
@@ -32,7 +36,7 @@ export const AuthContextProvider = (props: PropsWithChildren) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={session}>
+    <>
       {loading && <CircleLoader color="white" />}
       {!session && !loading ? (
         <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -40,16 +44,20 @@ export const AuthContextProvider = (props: PropsWithChildren) => {
             <Auth
               onlyThirdPartyProviders
               providers={["google"]}
-              redirectTo="https://endgame-portal.vercel.app/auth/callback"
+              redirectTo={process.env.NEXT_PUBLIC_REDIRECT_URL}
               supabaseClient={supabase}
               appearance={{ theme: ThemeSupa }}
             />
           </div>
         </div>
       ) : (
-        session && props.children
+        session && (
+          <AuthContext.Provider value={[session, supabase]}>
+            {props.children}
+          </AuthContext.Provider>
+        )
       )}
-    </AuthContext.Provider>
+    </>
   );
 };
 

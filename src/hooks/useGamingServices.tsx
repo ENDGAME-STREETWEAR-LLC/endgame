@@ -16,6 +16,7 @@ import {
 import {
   createContext,
   PropsWithChildren,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -25,7 +26,6 @@ import {
   PSNAuthSession,
   PSNData,
   SteamAchievementsData,
-  SteamAuthSession,
   SteamData,
   XBLAchievementsData,
   XBLAuthSession,
@@ -37,6 +37,7 @@ import {
   Services,
   GamingSessionValue,
 } from "@/types";
+import useAuthStore from "./useAuthStore";
 
 export const GamingServicesContext = createContext<GamingSessionValue>(
   null as any
@@ -59,12 +60,81 @@ export default function useGamingServices(): GamingServicesHook {
       "useGamingServices must be used from within GamingServicesContextProvider component."
     );
 
+  const [{ user }, supabase] = useAuthStore();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const [psnData, setPsnData] = useState<null | PSNData>(null);
   const [xblData, setXblData] = useState<null | XBLData>(null);
   const [steamData, setSteamData] = useState<null | SteamData>(null);
+
+  const retrieveSupabaseData = useCallback(
+    async (service: Services) => {
+      let table;
+
+      switch (service) {
+        case Services.PSN:
+          table = "psn_data";
+          break;
+
+        case Services.XBL:
+          table = "xbox_data";
+          break;
+
+        case Services.Steam:
+          table = "steam_data";
+          break;
+      }
+
+      const query = await supabase
+        .from(table)
+        .select("*")
+        .eq("user_id", user.id);
+
+      if (query.error) throw new Error(query.error.message);
+
+      if (query.data.length === 0) return null;
+
+      return query.data[0].data;
+    },
+    [supabase, user]
+  );
+
+  const updateSupabaseData = useCallback(
+    async (service: Services, data: PSNData | XBLData | SteamData) => {
+      let table;
+
+      switch (service) {
+        case Services.PSN:
+          table = "psn_data";
+          break;
+
+        case Services.XBL:
+          table = "xbox_data";
+          break;
+
+        case Services.Steam:
+          table = "steam_data";
+          break;
+      }
+
+      const query = await supabase
+        .from(table)
+        .upsert(
+          {
+            user_id: user.id,
+            data,
+          },
+          { onConflict: "user_id" }
+        )
+        .select("*");
+
+      if (query.error) throw new Error(query.error.message);
+
+      return query.data;
+    },
+    [supabase, user]
+  );
 
   const authState = useMemo(() => {
     if (!session) {
@@ -83,21 +153,23 @@ export default function useGamingServices(): GamingServicesHook {
   }, [session]);
 
   useEffect(() => {
-    const storedPsn = localStorage.getItem("psn");
-    const storedXbl = localStorage.getItem("xbl");
-    const storedSteam = localStorage.getItem("steam");
+    new Promise(async () => {
+      const storedPsn = await retrieveSupabaseData(Services.PSN);
+      const storedXbl = await retrieveSupabaseData(Services.XBL);
+      const storedSteam = await retrieveSupabaseData(Services.Steam);
 
-    if (storedPsn) {
-      setPsnData(JSON.parse(storedPsn));
-    }
+      if (storedPsn) {
+        setPsnData(storedPsn);
+      }
 
-    if (storedXbl) {
-      setXblData(JSON.parse(storedXbl));
-    }
+      if (storedXbl) {
+        setXblData(storedXbl);
+      }
 
-    if (storedSteam) {
-      setSteamData(JSON.parse(storedSteam));
-    }
+      if (storedSteam) {
+        setSteamData(storedSteam);
+      }
+    });
   }, []);
 
   const syncPsnData = async () => {
@@ -105,6 +177,7 @@ export default function useGamingServices(): GamingServicesHook {
     if (!storedSession) return;
 
     try {
+      setError("");
       setLoading(true);
 
       const session = JSON.parse(storedSession) as PSNAuthSession;
@@ -145,8 +218,8 @@ export default function useGamingServices(): GamingServicesHook {
         trophies,
       };
 
+      await updateSupabaseData(Services.PSN, data);
       setPsnData(data);
-      localStorage.setItem("psn", JSON.stringify(data));
     } catch (error) {
       setError((error as Error).message);
     } finally {
@@ -159,6 +232,7 @@ export default function useGamingServices(): GamingServicesHook {
     if (!storedSession) return;
 
     try {
+      setError("");
       setLoading(true);
 
       const { xuid } = JSON.parse(storedSession) as XBLAuthSession;
@@ -175,8 +249,8 @@ export default function useGamingServices(): GamingServicesHook {
 
       const data = { achievements, profile };
 
+      await updateSupabaseData(Services.XBL, data);
       setXblData(data);
-      localStorage.setItem("xbl", JSON.stringify(data));
     } catch (error) {
       setError((error as Error).message);
     } finally {
@@ -189,6 +263,7 @@ export default function useGamingServices(): GamingServicesHook {
     if (!userId) return;
 
     try {
+      setError("");
       setLoading(true);
 
       const profile = (await fetcher([
@@ -208,8 +283,8 @@ export default function useGamingServices(): GamingServicesHook {
 
       const data = { profile, games, achievements };
 
+      await updateSupabaseData(Services.Steam, data);
       setSteamData(data);
-      localStorage.setItem("steam", JSON.stringify(data));
     } catch (error) {
       setError((error as Error).message);
     } finally {

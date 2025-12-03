@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import useAuthStore from "@/hooks/useAuthStore";
 
 export default function MainApp() {
-  const session = useAuthStore();
+  const [session] = useAuthStore();
   const shopify = useShopify();
   const [products, setProducts] = useState<null | { node: ProductNode }[]>();
 
