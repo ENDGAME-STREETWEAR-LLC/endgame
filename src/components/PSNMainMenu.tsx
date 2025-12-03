@@ -2,7 +2,7 @@
 
 import { NPSSO_URL, PSN_AUTH_URL } from "@/constants/auth";
 import useGamingServices from "@/hooks/useGamingServices";
-import { Services } from "@/types";
+import { PSNAuthSession, Services } from "@/types";
 import { fetcher, PsnEndpoints } from "@/utils/api";
 import { formatObjectJSON } from "@/utils/text";
 import { useRouter } from "next/navigation";
@@ -22,10 +22,15 @@ export default function PSNMainMenu() {
 
   const submitNpssoHandler = useCallback(async () => {
     try {
-      const data = await fetcher([PsnEndpoints.AccessToken, `?npsso=${npsso}`]);
+      const data = (await fetcher([
+        PsnEndpoints.AccessToken,
+        `?npsso=${npsso}`,
+      ])) as PSNAuthSession;
 
       // TODO add expiry time for session cookies
-      document.cookie = `psn_session=${JSON.stringify(data)}`;
+      document.cookie = `psn_session=${JSON.stringify(data)}; expires=${
+        data.expiresIn * 1000
+      }; path=/`;
       router.refresh();
     } catch (error) {
       console.error(error);

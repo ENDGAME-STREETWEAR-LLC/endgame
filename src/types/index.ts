@@ -58,9 +58,11 @@ export type GamingServicesHook = [
  */
 export interface PSNAuthSession {
   accessToken: string;
+  /** Expiration time in seconds */
   expiresIn: number;
   idToken: string;
   refreshToken: string;
+  /** Expiration time in seconds */
   refreshTokenExpiresIn: number;
   scope: string;
   tokenType: "bearer";

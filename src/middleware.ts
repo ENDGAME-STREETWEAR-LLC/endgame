@@ -56,7 +56,10 @@ export async function middleware(req: NextRequest) {
       const xboxRes = NextResponse.redirect(new URL("/xbox/home", req.url));
 
       // TODO set expiry time for session cookies
-      xboxRes.cookies.set("xbox_session", JSON.stringify(data));
+      xboxRes.cookies.set("xbox_session", JSON.stringify(data), {
+        expires: 3600 * 1000,
+        path: "/xbox/home",
+      });
       return xboxRes;
 
     case REQUEST_MATCHERS.Steam:
@@ -72,7 +75,10 @@ export async function middleware(req: NextRequest) {
       const steamRes = NextResponse.redirect(new URL("/steam/home", req.url));
 
       // TODO set expiry time for session cookies
-      steamRes.cookies.set("steam_session", userId);
+      steamRes.cookies.set("steam_session", userId, {
+        expires: 3600 * 1000,
+        path: "/steam/home",
+      });
       return steamRes;
   }
 }
