@@ -57,7 +57,7 @@ export async function middleware(req: NextRequest) {
 
       // TODO set expiry time for session cookies
       xboxRes.cookies.set("xbox_session", JSON.stringify(data), {
-        expires: 3600 * 1000,
+        maxAge: 3600,
         path: "/xbox/home",
       });
       return xboxRes;
@@ -76,7 +76,7 @@ export async function middleware(req: NextRequest) {
 
       // TODO set expiry time for session cookies
       steamRes.cookies.set("steam_session", userId, {
-        expires: 3600 * 1000,
+        maxAge: 3600,
         path: "/steam/home",
       });
       return steamRes;

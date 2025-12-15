@@ -6,11 +6,13 @@ import { PSNAuthSession, Services } from "@/types";
 import { fetcher, PsnEndpoints } from "@/utils/api";
 import { formatObjectJSON } from "@/utils/text";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useCallback, useState } from "react";
-import { CircleLoader } from "react-spinners";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { CircleLoader, ClipLoader } from "react-spinners";
+import Modal from "./Modal";
 
 export default function PSNMainMenu() {
-  const [loading, error, sync, data, authState] = useGamingServices();
+  const [authLoading, setAuthLoading] = useState(false);
+  const [loading, error, sync, data, authState, logout] = useGamingServices();
   const router = useRouter();
 
   const [npsso, setNpsso] = useState("");
@@ -20,33 +22,62 @@ export default function PSNMainMenu() {
     [npsso]
   );
 
+  const [authInProgress, setAuthInProgress] = useState(false);
+
+  useEffect(() => {
+    if (authInProgress && data.psn) {
+      alert("Your session has expired. Please log in again.");
+    }
+  }, [authInProgress]);
+
+  const syncDataHandler = () => {
+    if (authState.psn) {
+      sync(Services.PSN);
+    } else {
+      setAuthInProgress(true);
+    }
+  };
+
+  const cancelAuthHandler = () => setAuthInProgress(false);
+
   const submitNpssoHandler = useCallback(async () => {
     try {
+      setAuthLoading(true);
       const data = (await fetcher([
         PsnEndpoints.AccessToken,
         `?npsso=${npsso}`,
       ])) as PSNAuthSession;
 
-      // TODO add expiry time for session cookies
-      document.cookie = `psn_session=${JSON.stringify(data)}; expires=${
-        data.expiresIn * 1000
-      }; path=/`;
+      document.cookie = `psn_session=${JSON.stringify(data)}; max-age=${
+        data.expiresIn
+      }; path=/psn/home`;
+      setNpsso("");
+      setAuthInProgress(false);
       router.refresh();
     } catch (error) {
       console.error(error);
+    } finally {
+      setAuthLoading(false);
     }
   }, [npsso]);
+
+  const logoutHandler = async () => {
+    await logout(Services.PSN);
+    document.cookie = "psn_session=; Max-Age=0; path=/psn/home";
+    router.refresh();
+  };
 
   return (
     <div className="w-full h-full justify-center items-center flex flex-col gap-[1rem]">
       {/** Render message if user is logged out of PSN network */}
-      {!loading && !authState.psn && (
-        <>
+
+      <Modal open={authInProgress}>
+        <div className="flex flex-col gap-3 text-center items-center w-full p-4">
           <p>You are currently logged out of PSN Network.</p>
           <a
             target="_blank"
             href={PSN_AUTH_URL}
-            className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
+            className="w-full cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
           >
             Log into PSN Network
           </a>
@@ -61,28 +92,45 @@ export default function PSNMainMenu() {
             placeholder="Enter NPSSO..."
             onChange={changeNpssoHandler}
           />
-          <button
-            onClick={submitNpssoHandler}
-            className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-          >
-            Submit
-          </button>
-        </>
-      )}
+          {authLoading ? (
+            <button
+              disabled
+              className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
+            >
+              <ClipLoader />
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={submitNpssoHandler}
+                className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
+              >
+                Submit
+              </button>
+              <button
+                onClick={cancelAuthHandler}
+                className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
+              >
+                Cancel
+              </button>
+            </>
+          )}
+        </div>
+      </Modal>
 
       {/** Render components for loading and error states */}
       {loading && <CircleLoader color="white" />}
       {error && <p>{error}</p>}
 
       {/** Render message if user has no data in sync yet for their PSN account  */}
-      {!loading && !error && authState.psn && !data.psn && (
+      {!loading && !error && !data.psn && (
         <>
           <p>No data is in sync yet.</p>
         </>
       )}
 
       {/** Render synced content for logged in PSN account */}
-      {!loading && !error && authState.psn && data.psn && (
+      {!loading && !error && data.psn && (
         <>
           <p>PSN User Info</p>
           <p>Name: {data.psn.profile.onlineId}</p>
@@ -115,13 +163,20 @@ export default function PSNMainMenu() {
         </>
       )}
 
-      {authState.psn && (
+      <button
+        disabled={loading}
+        onClick={syncDataHandler}
+        className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
+      >
+        Sync data for PSN account
+      </button>
+      {!loading && data.psn && (
         <button
           disabled={loading}
-          onClick={() => sync(Services.PSN)}
+          onClick={logoutHandler}
           className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
         >
-          Sync data for PSN account
+          Sign out
         </button>
       )}
     </div>

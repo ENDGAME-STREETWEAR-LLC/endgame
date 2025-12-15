@@ -3,6 +3,7 @@ import useShopify from "@/hooks/useShopify";
 import { ProductNode } from "@/models/shopify";
 import { useEffect, useState } from "react";
 import useAuthStore from "@/hooks/useAuthStore";
+import Modal from "./Modal";
 
 export default function MainApp() {
   const [session] = useAuthStore();

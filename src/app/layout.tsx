@@ -39,6 +39,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <div id="modal-root"></div>
         <main>
           <AuthContextProvider>
             <GamingServicesContextProvider value={session}>

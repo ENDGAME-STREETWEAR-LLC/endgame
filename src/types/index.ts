@@ -50,7 +50,8 @@ export type GamingServicesHook = [
   string,
   (service: Services) => void,
   GamingServicesData,
-  GamingServicesAuthState
+  GamingServicesAuthState,
+  (service: Services) => Promise<void>
 ];
 
 /**

@@ -101,7 +101,7 @@ export default function useGamingServices(): GamingServicesHook {
   );
 
   const updateSupabaseData = useCallback(
-    async (service: Services, data: PSNData | XBLData | SteamData) => {
+    async (service: Services, data: null | (PSNData | XBLData | SteamData)) => {
       let table;
 
       switch (service) {
@@ -118,16 +118,26 @@ export default function useGamingServices(): GamingServicesHook {
           break;
       }
 
-      const query = await supabase
-        .from(table)
-        .upsert(
-          {
-            user_id: user.id,
-            data,
-          },
-          { onConflict: "user_id" }
-        )
-        .select("*");
+      let query;
+
+      if (data) {
+        query = await supabase
+          .from(table)
+          .upsert(
+            {
+              user_id: user.id,
+              data,
+            },
+            { onConflict: "user_id" }
+          )
+          .select("*");
+      } else {
+        query = await supabase
+          .from(table)
+          .delete()
+          .eq("user_id", user.id)
+          .select("*");
+      }
 
       if (query.error) throw new Error(query.error.message);
 
@@ -154,6 +164,8 @@ export default function useGamingServices(): GamingServicesHook {
 
   useEffect(() => {
     new Promise(async () => {
+      setLoading(true)
+
       const storedPsn = await retrieveSupabaseData(Services.PSN);
       const storedXbl = await retrieveSupabaseData(Services.XBL);
       const storedSteam = await retrieveSupabaseData(Services.Steam);
@@ -169,6 +181,8 @@ export default function useGamingServices(): GamingServicesHook {
       if (storedSteam) {
         setSteamData(storedSteam);
       }
+
+      setLoading(false)
     });
   }, []);
 
@@ -306,6 +320,31 @@ export default function useGamingServices(): GamingServicesHook {
     }
   };
 
+  const logout = async (service: Services) => {
+    setLoading(true);
+    setError("");
+
+    try {
+      await updateSupabaseData(service, null);
+
+      switch (service) {
+        case Services.PSN:
+          setPsnData(null);
+          break;
+        case Services.XBL:
+          setXblData(null);
+          break;
+        case Services.Steam:
+          setSteamData(null);
+          break;
+      }
+    } catch (error) {
+      setError("Logout failed: " + (error as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return [
     loading,
     error,
@@ -316,5 +355,6 @@ export default function useGamingServices(): GamingServicesHook {
       steam: steamData,
     },
     authState,
+    logout,
   ];
 }
