@@ -4,13 +4,17 @@ import { NPSSO_URL, PSN_AUTH_URL } from "@/constants/auth";
 import useGamingServices from "@/hooks/useGamingServices";
 import { PSNAuthSession, Services } from "@/types";
 import { fetcher, PsnEndpoints } from "@/utils/api";
-import { formatObjectJSON } from "@/utils/text";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { CircleLoader, ClipLoader } from "react-spinners";
 import Modal from "./Modal";
+import { useLocalization } from "@/hooks/useLocalization";
+
+const arraySum = (array: number[]) =>
+  array.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
 export default function PSNMainMenu() {
+  const { localization: t } = useLocalization();
   const [authLoading, setAuthLoading] = useState(false);
   const [loading, error, sync, data, authState, logout] = useGamingServices();
   const router = useRouter();
@@ -26,7 +30,7 @@ export default function PSNMainMenu() {
 
   useEffect(() => {
     if (authInProgress && data.psn) {
-      alert("Your session has expired. Please log in again.");
+      alert(t.sessionExpired);
     }
   }, [authInProgress]);
 
@@ -73,23 +77,23 @@ export default function PSNMainMenu() {
 
       <Modal open={authInProgress}>
         <div className="flex flex-col gap-3 text-center items-center w-full p-4">
-          <p>You are currently logged out of PSN Network.</p>
+          <p>{t.psn.loggedOut}</p>
           <a
             target="_blank"
             href={PSN_AUTH_URL}
             className="w-full cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
           >
-            Log into PSN Network
+            {t.psn.logIn}
           </a>
           <a href={NPSSO_URL} target="_blank">
             <button className="cursor-pointer rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]">
-              Retrieve NPSSO token
+              {t.psn.retrieveToken}
             </button>
           </a>
           <input
             className="bg-[#FFFFFF33] rounded-full p-2"
             type="text"
-            placeholder="Enter NPSSO..."
+            placeholder={t.psn.placeholder}
             onChange={changeNpssoHandler}
           />
           {authLoading ? (
@@ -105,13 +109,13 @@ export default function PSNMainMenu() {
                 onClick={submitNpssoHandler}
                 className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
               >
-                Submit
+                {t.submit}
               </button>
               <button
                 onClick={cancelAuthHandler}
                 className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
               >
-                Cancel
+                {t.cancel}
               </button>
             </>
           )}
@@ -120,42 +124,107 @@ export default function PSNMainMenu() {
 
       {/** Render components for loading and error states */}
       {loading && <CircleLoader color="white" />}
-      {error && <p>{error}</p>}
+      {error && <p>{t.error}</p>}
 
       {/** Render message if user has no data in sync yet for their PSN account  */}
       {!loading && !error && !data.psn && (
         <>
-          <p>No data is in sync yet.</p>
+          <p>{t.noData}</p>
         </>
       )}
 
       {/** Render synced content for logged in PSN account */}
       {!loading && !error && data.psn && (
         <>
-          <p>PSN User Info</p>
-          <p>Name: {data.psn.profile.onlineId}</p>
+          <h2 className="font-bold text-xl">{t.psn.info.title}:</h2>
+          <img
+            width={data.psn.profile.avatarUrls[0].size}
+            height={data.psn.profile.avatarUrls[0].size}
+            src={data.psn.profile.avatarUrls[0].avatarUrl}
+          ></img>
+          <p>
+            {t.psn.info.profileName} {data.psn.profile.onlineId}
+          </p>
 
-          <div className="flex w-full justify-evenly">
-            <div className="w-[300px] h-[300px] overflow-x-scroll bg-[#FFFFFF33] p-2 rounded-sm">
-              <p>Earned trophies:</p>
-              {data.psn.trophies.map((trophy, index) => (
-                <div className="mt-4" key={index}>
-                  {formatObjectJSON(trophy).map((text) => (
-                    <p key={text}>{text}</p>
-                  ))}
-                  <br></br>
-                </div>
-              ))}
-            </div>
-
-            <div className="w-[300px] h-[300px] overflow-x-scroll bg-[#FFFFFF33] p-2 rounded-sm">
-              <p>Owned Titles:</p>
+          <div className="flex w-full justify-center">
+            <div className="w-[500px] h-[500px] overflow-x-scroll bg-[#FFFFFF33] p-2 rounded-sm">
+              <p>{t.psn.info.ownedTitles}</p>
               {data.psn.titles.trophyTitles.map((title, index) => (
                 <div className="mt-4" key={title.npServiceName + index}>
-                  {formatObjectJSON(title).map((text) => (
-                    <p key={text}>{text}</p>
-                  ))}
-                  <br></br>
+                  <img
+                    width={200}
+                    height={200}
+                    alt={title.trophyTitleName}
+                    src={title.trophyTitleIconUrl}
+                  ></img>
+                  <p>
+                    {t.psn.info.titleName} {title.trophyTitleName}
+                  </p>
+                  {title.trophyTitlePlatform !== "PS5" && (
+                    <p>
+                      {t.psn.info.titleDetail} {title.trophyTitleDetail}
+                    </p>
+                  )}
+                  <p>
+                    {t.psn.info.totalTrophiesPercentage} {title.progress}%
+                  </p>
+                  <p>
+                    {t.psn.info.titlePlatform} {title.trophyTitlePlatform}
+                  </p>
+                  <p>
+                    {t.psn.info.totalTrophiesCount}{" "}
+                    {arraySum(Object.values(title.earnedTrophies))}
+                  </p>
+                  <div>
+                    <p>
+                      {t.psn.trophyTypes.bronze}: {title.earnedTrophies.bronze}
+                    </p>
+                    <p>
+                      {t.psn.trophyTypes.silver}: {title.earnedTrophies.silver}
+                    </p>
+                    <p>
+                      {t.psn.trophyTypes.gold}: {title.earnedTrophies.gold}
+                    </p>
+                    <p>
+                      {t.psn.trophyTypes.platinum}:{" "}
+                      {title.earnedTrophies.platinum}
+                    </p>
+                  </div>
+                  <div className="flex flex-col mt-4">
+                    <p>{t.psn.info.earnedTrophies}</p>
+                    {data?.psn?.trophies
+                      ?.find(
+                        (trophy) =>
+                          title.trophyTitleName === Object.keys(trophy)[0]
+                      )
+                      ?.[title.trophyTitleName].map((trophy) => (
+                        <div
+                          className="flex flex-col mb-4"
+                          key={trophy.trophyId}
+                        >
+                          <img
+                            width={200}
+                            height={200}
+                            src={trophy.trophyIconUrl}
+                            alt={trophy.trophyId.toString()}
+                          ></img>
+                          <p>
+                            {t.psn.info.trophyName} {trophy.trophyName}
+                          </p>
+                          <p>
+                            {t.psn.info.trophyType}{" "}
+                            {t.psn.trophyTypes[trophy.trophyType]}
+                          </p>
+                          <p>
+                            {t.psn.info.trophyDetail} {trophy.trophyDetail}
+                          </p>
+                          <p>
+                            {t.psn.info.trophyHidden}{" "}
+                            {trophy.trophyHidden ? t.yes : t.no}
+                          </p>
+                        </div>
+                      ))}
+                  </div>
                 </div>
               ))}
             </div>
@@ -168,7 +237,7 @@ export default function PSNMainMenu() {
         onClick={syncDataHandler}
         className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
       >
-        Sync data for PSN account
+        {t.syncData}
       </button>
       {!loading && data.psn && (
         <button
@@ -176,7 +245,7 @@ export default function PSNMainMenu() {
           onClick={logoutHandler}
           className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
         >
-          Sign out
+          {t.signOut}
         </button>
       )}
     </div>

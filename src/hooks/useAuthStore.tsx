@@ -44,6 +44,9 @@ export const AuthContextProvider = (props: PropsWithChildren) => {
             <Auth
               onlyThirdPartyProviders
               providers={["google"]}
+              localization={{
+                variables: { sign_in: { social_provider_text: "Ayayay" } },
+              }}
               redirectTo={process.env.NEXT_PUBLIC_REDIRECT_URL}
               supabaseClient={supabase}
               appearance={{ theme: ThemeSupa }}

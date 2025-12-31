@@ -5,7 +5,13 @@ import { SteamAuthSession, XBLAuthSession } from "@/types";
  * Request matchers for middleware function
  */
 const REQUEST_MATCHERS = Object.freeze({
+  /**
+   * Xbox request matcher path.
+   */
   Xbox: "/xbox",
+  /**
+   * Steam request matcher path.
+   */
   Steam: "/steam",
 });
 

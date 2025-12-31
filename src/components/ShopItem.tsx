@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocalization } from "@/hooks/useLocalization";
 import useShopify from "@/hooks/useShopify";
 import { Session } from "@supabase/supabase-js";
 import { FormEvent, useState } from "react";
@@ -22,6 +23,7 @@ export default function ShopItem({
 }: ShopItemProps) {
   const shopify = useShopify();
   const [loading, setLoading] = useState(false);
+  const { localization: t } = useLocalization();
 
   async function submitFormHandler(event: FormEvent<HTMLFormElement>) {
     setLoading(true);
@@ -42,7 +44,7 @@ export default function ShopItem({
         price: parseInt(formData.price as string),
         quantity: parseInt(formData.quantity as string),
       });
-      alert("Purchase order created successfully!");
+      alert(t.shop.success);
       setLoading(false);
       return result;
     } catch (error) {
@@ -70,11 +72,11 @@ export default function ShopItem({
       <div className="flex flex-col pt-2">
         <p className="font-bold text-center">{title}</p>
         <span className="flex justify-between">
-          <p>Price</p>
+          <p>{t.shop.price}</p>
           <p className="text-right">{price} $</p>
         </span>
         <span className="flex justify-between">
-          <p>Quantity</p>
+          <p>{t.shop.quantity}</p>
           <input
             className="w-10 bg-[#222222] text-center rounded-sm"
             type="number"
@@ -89,7 +91,7 @@ export default function ShopItem({
             className="text-center font-bold text-black w-full bg-white hover:bg-[#FFFFFFDD] cursor-pointer rounded-full p-3 mt-4"
             type="submit"
           >
-            Buy
+            {t.shop.buy}
           </button>
         )}
         {loading && (

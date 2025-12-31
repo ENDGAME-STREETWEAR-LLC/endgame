@@ -2,20 +2,31 @@
 
 import { XBOX_AUTH_URL } from "@/constants/auth";
 import useGamingServices from "@/hooks/useGamingServices";
-import { Services } from "@/types";
+import { Services, XBLSettingsID } from "@/types";
 import { CircleLoader } from "react-spinners";
 import Modal from "./Modal";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useLocalization } from "@/hooks/useLocalization";
 
 export default function XboxMainMenu() {
   const router = useRouter();
   const [loading, error, sync, data, authState, logout] = useGamingServices();
   const [authInProgress, setAuthInProgress] = useState(false);
+  const { localization: t } = useLocalization();
+
+  const settingsMap = useMemo(() => {
+    if (!data?.xbl) return {};
+    const settings = data.xbl?.profile.settings;
+    const settingsMap: Partial<Record<XBLSettingsID, string>> = {};
+
+    settings.forEach((setting) => (settingsMap[setting.id] = setting.value));
+    return settingsMap;
+  }, [data]);
 
   useEffect(() => {
     if (authInProgress && data.xbl) {
-      alert("Your session has expired. Please log in again.");
+      alert(t.sessionExpired);
     }
   }, [authInProgress]);
 
@@ -40,19 +51,19 @@ export default function XboxMainMenu() {
       {/** Render message if user is logged out of XBL network */}
       <Modal open={authInProgress}>
         <div className="flex flex-col gap-3 text-center items-center w-full p-4">
-          <p>You are currently logged out of XBL Network.</p>
+          <p>{t.xbox.loggedOut}</p>
           <a
             target="_self"
             href={XBOX_AUTH_URL}
             className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
           >
-            Log into XBL network
+            {t.xbox.logIn}
           </a>
           <button
             onClick={cancelAuthHandler}
             className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
           >
-            Cancel
+            {t.cancel}
           </button>
         </div>
       </Modal>
@@ -64,25 +75,98 @@ export default function XboxMainMenu() {
       {/** Render message if user has no data in sync yet for their XBL account  */}
       {!loading && !error && !data.xbl && (
         <>
-          <p>No data is in sync yet.</p>
+          <p>{t.noData}</p>
         </>
       )}
 
       {/** Render synced content for logged in XBL account */}
       {!loading && !error && data.xbl && (
         <>
-          <p>XBL User Info</p>
-          <p>Name: {data.xbl.profile.id}</p>
+          <h2 className="font-bold text-xl">{t.xbox.info.title}</h2>
+          <p>
+            {t.xbox.info.profileId} {data.xbl.profile.id}
+          </p>
+          <p>
+            {t.xbox.info.gamertag} {settingsMap.Gamertag}
+          </p>
+          <p>
+            {t.xbox.info.accountTier} {settingsMap.AccountTier}
+          </p>
+          <p>
+            {t.xbox.info.bio} {settingsMap.Bio}
+          </p>
 
-          <div className="flex w-full justify-evenly">
-            <div className="w-[300px] h-[300px] overflow-x-scroll bg-[#FFFFFF33] p-2 rounded-sm">
-              <p>Earned achievements:</p>
-              {JSON.stringify(data.xbl.achievements)}
-            </div>
+          <div className="flex w-full justify-center">
+            <div className="w-[500px] h-[500px] overflow-x-scroll bg-[#FFFFFF33] p-2 rounded-sm">
+              <p>{t.xbox.info.playedGames}</p>
+              {data.xbl.achievements
+                .filter((game) => game.type === "Game")
+                .map((game) => (
+                  <div className="flex flex-col mt-4" key={game.titleId}>
+                    <img width={200} height={200} src={game.displayImage}></img>
+                    <p>
+                      {t.xbox.info.gameName} {game.name}
+                    </p>
+                    {typeof game?.detail === "string" && (
+                      <p>
+                        {t.xbox.info.gameDetail} {game.detail}
+                      </p>
+                    )}
 
-            <div className="w-[300px] h-[300px] overflow-x-scroll bg-[#FFFFFF33] p-2 rounded-sm">
-              <p>Profile Data:</p>
-              {JSON.stringify(data.xbl.profile)}
+                    <p>
+                      {t.xbox.info.totalAchievements}{" "}
+                      {game.achievement.currentAchievements}
+                    </p>
+                    <p>
+                      {t.xbox.info.currentGamerScore}{" "}
+                      {game.achievement.currentGamerscore}
+                    </p>
+                    <p>
+                      {t.xbox.info.progressPercentage}{" "}
+                      {game.achievement.progressPercentage}%
+                    </p>
+                    <div className="flex flex-col mt-4">
+                      <p>{t.xbox.info.earnedAchievements}</p>
+                      {game.achievements.map((achievement) => (
+                        <div
+                          className="flex flex-col mb-4"
+                          key={achievement.id}
+                        >
+                          <img
+                            width={200}
+                            height={200}
+                            alt={achievement.name}
+                            src={
+                              achievement.mediaAssets.find(
+                                (asset) => asset.type === "Icon"
+                              )?.url
+                            }
+                          ></img>
+                          <p>
+                            {t.xbox.info.achievementName} {achievement.name}
+                          </p>
+                          <p>
+                            {t.xbox.info.achievementDescription}{" "}
+                            {achievement.description}
+                          </p>
+                          <p>
+                            {t.xbox.info.achievementLockedDescription}{" "}
+                            {achievement.lockedDescription}
+                          </p>
+                          <p>
+                            {t.xbox.info.achievementCategory}{" "}
+                            {achievement.rarity.currentCategory}
+                          </p>
+                          <p>
+                            {t.xbox.info.isSecretAchievement}{" "}
+                            {achievement.isSecret ? t.yes : t.no}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              <p></p>
             </div>
           </div>
         </>
@@ -93,7 +177,7 @@ export default function XboxMainMenu() {
         onClick={syncDataHandler}
         className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
       >
-        Sync data for XBL account
+        {t.syncData}
       </button>
       {!loading && data.xbl && (
         <button
@@ -101,7 +185,7 @@ export default function XboxMainMenu() {
           onClick={logoutHandler}
           className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
         >
-          Sign out
+          {t.signOut}
         </button>
       )}
     </div>

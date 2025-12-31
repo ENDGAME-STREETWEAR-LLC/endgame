@@ -4,7 +4,8 @@ import "./globals.css";
 import { AuthContextProvider } from "@/hooks/useAuthStore";
 import { GamingServicesContextProvider } from "@/hooks/useGamingServices";
 import { cookies } from "next/headers";
-import Link from "next/link";
+import Navigation from "@/components/Navigation";
+import { LocalizationProvider } from "@/hooks/useLocalization";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +19,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "ENDGAME",
-  description: "Endgame Portal",
+  description: "Endgame",
 };
 
 export default async function RootLayout({
@@ -41,27 +42,14 @@ export default async function RootLayout({
       >
         <div id="modal-root"></div>
         <main>
-          <AuthContextProvider>
-            <GamingServicesContextProvider value={session}>
-              <nav>
-                <ul className="flex gap-4 bg-[#FFFFFF33] m-2 p-4">
-                  <li className="hover:opacity-30">
-                    <Link href="/">Home</Link>
-                  </li>
-                  <li className="hover:opacity-30">
-                    <Link href="/psn/home">Playstation</Link>
-                  </li>
-                  <li className="hover:opacity-30">
-                    <Link href="/xbox/home">Xbox</Link>
-                  </li>
-                  <li className="hover:opacity-30">
-                    <Link href="/steam/home">Steam</Link>
-                  </li>
-                </ul>
-              </nav>
-              {children}
-            </GamingServicesContextProvider>
-          </AuthContextProvider>
+          <LocalizationProvider>
+            <AuthContextProvider>
+              <GamingServicesContextProvider value={session}>
+                <Navigation />
+                {children}
+              </GamingServicesContextProvider>
+            </AuthContextProvider>
+          </LocalizationProvider>
         </main>
       </body>
     </html>

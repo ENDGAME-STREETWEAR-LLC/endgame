@@ -169,13 +169,27 @@ export type XBLAchievementsData = {
 }[];
 
 /**
+ * All possible IDs for an XBL Profile Setting
+ */
+export type XBLSettingsID =
+  | "AccountTier"
+  | "Bio"
+  | "GameDisplayPicRaw"
+  | "Gamerscore"
+  | "Gamertag"
+  | "Location"
+  | "PreferredColor"
+  | "RealName"
+  | "XboxOneRep";
+
+/**
  * Contains profile data from an Xbox Live Account.
  */
 export interface XBLProfileData {
   id: string;
   hostId: string;
   settings: {
-    id: string;
+    id: XBLSettingsID;
     value: string;
   }[];
   isSponsoredUser: boolean;
@@ -192,6 +206,10 @@ export interface SteamAchievementsData {
       id: number;
       achievements: {
         apiname: string;
+        displayName: string;
+        description?: string;
+        icon: string;
+        hidden: 0 | 1;
         achieved: 0 | 1;
         unlocktime: 0;
       }[];

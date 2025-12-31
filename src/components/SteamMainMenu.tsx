@@ -3,20 +3,21 @@
 import { STEAM_AUTH_URL } from "@/constants/auth";
 import useGamingServices from "@/hooks/useGamingServices";
 import { Services } from "@/types";
-import { formatObjectJSON } from "@/utils/text";
 import { CircleLoader } from "react-spinners";
 import Modal from "./Modal";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useLocalization } from "@/hooks/useLocalization";
 
 export default function SteamMainMenu() {
   const router = useRouter();
   const [loading, error, sync, data, authState, logout] = useGamingServices();
   const [authInProgress, setAuthInProgress] = useState(false);
+  const { localization: t } = useLocalization();
 
   useEffect(() => {
     if (authInProgress && data.steam) {
-      alert("Your session has expired. Please log in again.");
+      alert(t.sessionExpired);
     }
   }, [authInProgress]);
 
@@ -41,14 +42,14 @@ export default function SteamMainMenu() {
       {/** Render message if user is logged out of Steam network */}
       <Modal open={authInProgress}>
         <div className="flex flex-col gap-3 text-center items-center w-full p-4">
-          <p>You are currently logged out of Steam Network.</p>
+          <p>{t.steam.loggedOut}</p>
           <a
             target="_self"
             href={STEAM_AUTH_URL}
             className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-transparent- text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-4 sm:w-auto"
           >
             <img
-              alt="Log into Steam Network"
+              alt={t.steam.logIn}
               src="https://community.akamai.steamstatic.com/public/shared/images/signinthroughsteam/sits_landing.png"
             ></img>
           </a>
@@ -56,7 +57,7 @@ export default function SteamMainMenu() {
             onClick={cancelAuthHandler}
             className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
           >
-            Cancel
+            {t.cancel}
           </button>
         </div>
       </Modal>
@@ -68,42 +69,79 @@ export default function SteamMainMenu() {
       {/** Render message if user has no data in sync yet for their Steam account  */}
       {!loading && !error && !data.steam && (
         <>
-          <p>No data is in sync yet.</p>
+          <p>{t.noData}</p>
         </>
       )}
 
       {/** Render synced content for logged in Steam account */}
       {!loading && !error && data.steam && (
         <>
-          <p>Steam User Info</p>
-          <p>Name: {data.steam.profile.response.players[0].personaname}</p>
-          <p>Total owned games: {data.steam.games.response.game_count}</p>
+          <h2 className="font-bold text-xl">{t.steam.info.title}</h2>
+          <p>
+            {t.steam.info.playerName}{" "}
+            {data.steam.profile.response.players[0].personaname}
+          </p>
+          <p>
+            {t.steam.info.totalOwnedGames}{" "}
+            {data.steam.games.response.game_count}
+          </p>
 
-          <div className="flex w-full justify-evenly">
-            <div className="w-[300px] h-[300px] overflow-x-scroll bg-[#FFFFFF33] p-2 rounded-sm">
-              <p>Achievements:</p>
-              {data.steam.achievements.response.games.map((game) => {
-                return (
-                  <div className="mt-4" key={game.id}>
-                    {formatObjectJSON(game).map((text) => (
-                      <p key={text}>{text}</p>
-                    ))}
-                  </div>
-                );
-              })}
-            </div>
+          <div className="w-[500px] h-[500px] overflow-x-scroll bg-[#FFFFFF33] p-2 rounded-sm">
+            <p>{t.steam.info.ownedGames}</p>
+            {data.steam.games.response.games.map((game, index) => {
+              const achievements =
+                data?.steam?.achievements.response.games.find(
+                  (achGame) => achGame.id === game.appid
+                )?.achievements;
 
-            <div className="w-[300px] h-[300px] overflow-x-scroll bg-[#FFFFFF33] p-2 rounded-sm">
-              <p>Owned Games:</p>
-              {data.steam.games.response.games.map((game, index) => (
-                <div className="mt-4" key={game.appid + index}>
-                  {formatObjectJSON(game).map((text) => (
-                    <p key={text}>{text}</p>
-                  ))}
-                  <br></br>
+              return (
+                <div className="flex flex-col mt-4" key={game.appid + index}>
+                  <p>
+                    {t.steam.info.gameName} {game.name}
+                  </p>
+                  <p>
+                    {t.steam.info.hasPlayed}{" "}
+                    {game.playtime_forever > 0 ? t.yes : t.no}
+                  </p>
+
+                  {
+                    <div className="flex flex-col mt-4">
+                      <p>
+                        {t.steam.info.earnedAchievements}{" "}
+                        {!achievements?.length && t.none}
+                      </p>
+                      {achievements?.map((achievement) => (
+                        <div
+                          key={achievement.apiname}
+                          className="flex flex-col mb-4"
+                        >
+                          <img
+                            width={100}
+                            height={100}
+                            alt={achievement.apiname}
+                            src={achievement.icon}
+                          ></img>
+                          <p>
+                            {t.steam.info.achievementName}{" "}
+                            {achievement.displayName}
+                          </p>
+                          {achievement.description && (
+                            <p>
+                              {t.steam.info.achievementDescription}{" "}
+                              {achievement.description}
+                            </p>
+                          )}
+                          <p>
+                            {t.steam.info.isHidden}{" "}
+                            {achievement.hidden === 1 ? t.yes : t.no}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  }
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
         </>
       )}
@@ -113,7 +151,7 @@ export default function SteamMainMenu() {
         onClick={syncDataHandler}
         className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
       >
-        Sync data for Steam account
+        {t.syncData}
       </button>
       {!loading && data.steam && (
         <button
@@ -121,7 +159,7 @@ export default function SteamMainMenu() {
           onClick={logoutHandler}
           className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
         >
-          Sign out
+          {t.signOut}
         </button>
       )}
     </div>
