@@ -9,6 +9,7 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { Session, SupabaseClient } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { CircleLoader } from "react-spinners";
+import { useLocalization } from "./useLocalization";
 
 export const AuthContext = createContext<[Session, SupabaseClient]>(
   null as any
@@ -18,6 +19,7 @@ export const AuthContextProvider = (props: PropsWithChildren) => {
   const supabase = createClient();
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<null | Session>(null);
+  const { localization: t } = useLocalization();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -45,7 +47,7 @@ export const AuthContextProvider = (props: PropsWithChildren) => {
               onlyThirdPartyProviders
               providers={["google"]}
               localization={{
-                variables: { sign_in: { social_provider_text: "Ayayay" } },
+                variables: { sign_in: { social_provider_text: t.signIn } },
               }}
               redirectTo={process.env.NEXT_PUBLIC_REDIRECT_URL}
               supabaseClient={supabase}

@@ -2,6 +2,14 @@ export default {
   yes: "Yes",
   no: "No",
   none: "None",
+  signIn: "Sign in with Google",
+  sessionExpired: "Your session has expired. Please log in again.",
+  error: "An error has ocurred. Please try again.",
+  signOut: "Sign out",
+  syncData: "Sync data",
+  submit: "Submit",
+  cancel: "Cancel",
+  noData: "No data is in sync yet.",
 
   nav: {
     home: "Home",
@@ -16,14 +24,6 @@ export default {
     quantity: "Quantity",
     success: "Purchase order created successfully!",
   },
-
-  sessionExpired: "Your session has expired. Please log in again.",
-  error: "An error has ocurred. Please try again.",
-  signOut: "Sign out",
-  syncData: "Sync data",
-  submit: "Submit",
-  cancel: "Cancel",
-  noData: "No data is in sync yet.",
 
   psn: {
     loggedOut: "You are currently logged out of PSN Network.",

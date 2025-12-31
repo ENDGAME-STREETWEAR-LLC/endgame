@@ -2,6 +2,7 @@ export default {
   yes: "Sí",
   no: "No",
   none: "Ninguno",
+  signIn: "Iniciar sesión con Google",
 
   nav: {
     home: "Inicio",
