@@ -225,6 +225,8 @@ export interface SteamGamesData {
     game_count: number;
     games: {
       name: string;
+      headerImage: string;
+      detailedDescription: string;
       appid: number;
       playtime_forever: number;
       playtime_windows_forever: number;

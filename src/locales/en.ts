@@ -96,11 +96,13 @@ export default {
     logIn: "Log into Steam Network",
 
     info: {
+      id: "Steam ID:",
       title: "Steam User Info",
       playerName: "Player name:",
       totalOwnedGames: "Total owned games:",
       ownedGames: "Owned games:",
       gameName: "Game name:",
+      gameDescription: "Game description:",
       hasPlayed: "Has been played:",
       earnedAchievements: "Earned achievements:",
       achievementName: "Achievement name:",

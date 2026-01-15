@@ -98,11 +98,13 @@ export default {
     logIn: "Iniciar sesión en la red Steam",
 
     info: {
+      id: "ID Steam:",
       title: "Información de usuario Steam:",
       playerName: "Nombre del jugador:",
       totalOwnedGames: "Total de juegos que posee:",
       ownedGames: "Juegos que posee:",
       gameName: "Nombre del juego:",
+      gameDescription: "Descripción del juego:",
       hasPlayed: "Ha sido jugado:",
       earnedAchievements: "Logros obtenidos:",
       achievementName: "Nombre del logro:",

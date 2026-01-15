@@ -87,6 +87,9 @@ export default function SteamMainMenu() {
             {data.steam.profile.response.players[0].personaname}
           </p>
           <p>
+            {t.steam.info.id} {data.steam.profile.response.players[0].steamid}
+          </p>
+          <p>
             {t.steam.info.totalOwnedGames}{" "}
             {data.steam.games.response.game_count}
           </p>
@@ -101,12 +104,21 @@ export default function SteamMainMenu() {
 
               return (
                 <div className="flex flex-col mt-4" key={game.appid + index}>
+                  <img
+                    width={150}
+                    height={100}
+                    alt={game.name}
+                    src={game.headerImage}
+                  ></img>
                   <p>
                     {t.steam.info.gameName} {game.name}
                   </p>
                   <p>
                     {t.steam.info.hasPlayed}{" "}
                     {game.playtime_forever > 0 ? t.yes : t.no}
+                  </p>
+                  <p>
+                    {t.steam.info.gameDescription} {game.detailedDescription}
                   </p>
 
                   {
