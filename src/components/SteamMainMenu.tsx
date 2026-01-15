@@ -77,6 +77,11 @@ export default function SteamMainMenu() {
       {!loading && !error && data.steam && (
         <>
           <h2 className="font-bold text-xl">{t.steam.info.title}</h2>
+          <img
+            width={200}
+            height={200}
+            src={data.steam.profile.response.players[0].avatarfull}
+          ></img>
           <p>
             {t.steam.info.playerName}{" "}
             {data.steam.profile.response.players[0].personaname}
