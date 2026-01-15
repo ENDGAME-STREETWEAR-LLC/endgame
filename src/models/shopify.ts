@@ -162,6 +162,7 @@ export interface OrderInput {
 export interface ProductNode {
   id: string;
   title: string;
+  totalInventory: number;
   handle: string;
   cursor: string;
   priceRangeV2?: {

@@ -19,7 +19,7 @@ export default function MainApp() {
 
   return (
     <div className="flex justify-center w-full">
-      <section className="grid grid-cols-3 gap-5">
+      <section className="grid grid-cols-2 md:grid-cols-3 gap-16 xl:gap-26">
         {products?.map(({ node }) => (
           <ShopItem
             id={node.variants.nodes[0].id}
@@ -27,6 +27,7 @@ export default function MainApp() {
             title={node.title}
             image={node.media.nodes[0].preview.image.url}
             price={node.priceRangeV2?.minVariantPrice?.amount as number}
+            stock={node.totalInventory}
             session={session}
           />
         ))}

@@ -1,4 +1,11 @@
 export default {
+  products: {
+    Shirt: "Camisa",
+    Mug: "Taza",
+    "Baseball Cap": "Gorra de béisbol",
+    Jeans: "Vaqueros",
+  },
+
   yes: "Sí",
   no: "No",
   none: "Ninguno",
@@ -12,10 +19,12 @@ export default {
   },
 
   shop: {
+    available: "Disponible",
     buy: "Comprar",
     price: "Precio",
     quantity: "Cantidad",
-    success: "¡Orden de compra creada exitosamente!",
+    success:
+      "¡Orden de compra creada exitosamente! Se ha enviado un correo de confirmación a tu dirección:",
   },
 
   sessionExpired: "Tu sesión ha caducado. Por favor ingresa nuevamente.",
@@ -24,6 +33,7 @@ export default {
   syncData: "Sincronizar datos",
   submit: "Enviar",
   cancel: "Cancelar",
+  close: "Cerrar",
   noData: "No hay datos sincronizados aún.",
 
   psn: {

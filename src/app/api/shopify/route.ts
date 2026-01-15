@@ -68,6 +68,7 @@ export const GET = async (req: NextRequest) => {
               } 
             }
             title
+            totalInventory
             handle
             priceRangeV2 {
               maxVariantPrice {
@@ -138,7 +139,7 @@ export const POST = async (req: NextRequest) => {
       lineItems: [
         {
           title: input.title,
-          quantity: 1,
+          quantity: input.quantity,
           variantId: input.id,
         },
       ],
@@ -184,7 +185,10 @@ export const POST = async (req: NextRequest) => {
     );
 
     if (invoiceRequest.errors) {
-      console.error("invoiceRequest errors", invoiceRequest.errors.graphQLErrors);
+      console.error(
+        "invoiceRequest errors",
+        invoiceRequest.errors.graphQLErrors
+      );
       throw new Error(
         invoiceRequest.errors.message +
           ". " +
