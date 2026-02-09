@@ -105,8 +105,8 @@ export default function SteamMainMenu() {
               return (
                 <div className="flex flex-col mt-4" key={game.appid + index}>
                   <img
-                    width={150}
-                    height={100}
+                    width={250}
+                    height={200}
                     alt={game.name}
                     src={game.headerImage}
                   ></img>
