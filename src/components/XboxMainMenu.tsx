@@ -83,6 +83,11 @@ export default function XboxMainMenu() {
       {!loading && !error && data.xbl && (
         <>
           <h2 className="font-bold text-xl">{t.xbox.info.title}</h2>
+          <img
+            width={200}
+            height={200}
+            src={settingsMap.GameDisplayPicRaw}
+          ></img>
           <p>
             {t.xbox.info.profileId} {data.xbl.profile.id}
           </p>

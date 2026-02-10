@@ -1,4 +1,11 @@
 export default {
+  products: {
+    Shirt: "Shirt",
+    Mug: "Mug",
+    "Baseball Cap": "Baseball Cap",
+    Jeans: "Jeans",
+  },
+
   yes: "Yes",
   no: "No",
   none: "None",
@@ -9,6 +16,7 @@ export default {
   syncData: "Sync data",
   submit: "Submit",
   cancel: "Cancel",
+  close: "Close",
   noData: "No data is in sync yet.",
 
   nav: {
@@ -19,10 +27,11 @@ export default {
   },
 
   shop: {
+    available: "Available",
     buy: "Buy",
     price: "Price",
     quantity: "Quantity",
-    success: "Purchase order created successfully!",
+    success: "Purchase order created successfully! A confirmation email has been sent to your address:",
   },
 
   psn: {
@@ -87,11 +96,13 @@ export default {
     logIn: "Log into Steam Network",
 
     info: {
+      id: "Steam ID:",
       title: "Steam User Info",
       playerName: "Player name:",
       totalOwnedGames: "Total owned games:",
       ownedGames: "Owned games:",
       gameName: "Game name:",
+      gameDescription: "Game description:",
       hasPlayed: "Has been played:",
       earnedAchievements: "Earned achievements:",
       achievementName: "Achievement name:",
