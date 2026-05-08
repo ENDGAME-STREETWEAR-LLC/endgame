@@ -58,6 +58,38 @@ Inside `useGamingServices` (`src/hooks/useGamingServices.tsx`), `sync(service)` 
 
 `logout(service)` deletes the Supabase row and clears local state but does **not** clear the auth cookie — that's a quirk to be aware of.
 
+### Commit hygiene
+
+Prefer **small, focused commits** over one large blob. Each commit should be a testable unit of work — one logical change at a time — so the git log reads like a story and `git bisect` / partial rollbacks stay surgical. When a task spans multiple concerns (refactor + new feature + docs), split it into separate commits with their own messages. Avoid lumping unrelated edits into a single "WIP" commit.
+
+### Commit message format
+
+Follow **Conventional Commits** + the **50/72 rule**:
+
+```
+<type>(<optional-scope>): <subject>
+
+<body, wrapped at 72 chars>
+
+<optional footer (refs, breaking changes, co-authors)>
+```
+
+- **Subject line:** ≤ 50 characters, imperative mood ("add X", not "added X" or "adds X"), no trailing period.
+- **Blank line** between subject and body, and between body and footer.
+- **Body:** wrap each line at 72 characters. Explain *why* the change was made, not *what* (the diff already shows what).
+- **Type** is one of: `feat` (new user-facing feature), `fix` (bug fix), `refactor` (code restructuring with no behavior change), `docs`, `style` (formatting), `test`, `chore` (tooling, deps, config), `perf`, `build`, `ci`.
+- **Scope** is optional and free-form, usually a biome or module name (e.g. `nexus`, `night-city/shop`, `auth`).
+
+Example:
+
+```
+refactor(nexus): extract shop into night-city biome
+
+Move MainApp + ShopItem into src/biomes/night-city/shop/ and rename
+MainApp to Shop. The Shopify-integrated grid was conflated with the
+landing experience; splitting it lets each biome own its own UI.
+```
+
 ### Conventions
 
 - All endpoint URLs live in the `Object.freeze`'d maps (`PsnEndpoints`, `XboxEndpoints`, `SteamEndpoints`) in `src/utils/api.ts`. Add new routes there so the union `Endpoint` type stays exhaustive — `fetcher` is typed against it.
