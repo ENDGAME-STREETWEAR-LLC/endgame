@@ -1,12 +1,13 @@
-import ShopItem from "./ShopItem";
+"use client";
+
+import useAuthStore from "@/hooks/useAuthStore";
 import useShopify from "@/hooks/useShopify";
 import { ProductNode } from "@/models/shopify";
 import { useEffect, useState } from "react";
-import useAuthStore from "@/hooks/useAuthStore";
-import Modal from "./Modal";
 import { ClipLoader } from "react-spinners";
+import ShopItem from "./ShopItem";
 
-export default function MainApp() {
+export default function Shop() {
   const [session] = useAuthStore();
   const shopify = useShopify();
   const [loading, setLoading] = useState(false);
