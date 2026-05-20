@@ -5,7 +5,7 @@ import useShopify from "@/hooks/useShopify";
 import { Session } from "@supabase/supabase-js";
 import { FormEvent, useState } from "react";
 import { ClipLoader } from "react-spinners";
-import Modal from "./Modal";
+import SuccessModal from "./SuccessModal";
 
 type ShopItemProps = {
   id: string;
@@ -45,9 +45,6 @@ export default function ShopItem({
       throw new Error("Product stock exceeded.");
     }
 
-    console.log("formData", formData);
-    console.log("quantity", parseInt(formData.quantity as string));
-
     try {
       const result = await shopify.createOrder({
         id,
@@ -74,18 +71,11 @@ export default function ShopItem({
       key={title}
       onSubmit={submitFormHandler}
     >
-      <Modal open={showSuccess}>
-        <div className="mt-2 flex flex-col gap-3 text-center items-center w-full p-4">
-          <p>{t.shop.success}</p>
-          <p className="my-4 font-bold">{session.user.email}</p>
-          <button
-            onClick={() => setShowSuccess(false)}
-            className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-          >
-            {t.close}
-          </button>
-        </div>
-      </Modal>
+      <SuccessModal
+        open={showSuccess}
+        email={session.user.email as string}
+        onClose={() => setShowSuccess(false)}
+      />
       <input className="hidden" defaultValue={title} name="title" />
       <input className="hidden" defaultValue={price} name="price" />
       <input className="hidden" defaultValue={image} name="image" />

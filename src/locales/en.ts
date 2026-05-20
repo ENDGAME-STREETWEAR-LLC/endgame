@@ -26,6 +26,26 @@ export default {
     steam: "Steam",
   },
 
+  nexus: {
+    biomeGates: {
+      title: "Biomes",
+    },
+    transmissions: {
+      title: "Transmissions",
+    },
+  },
+
+  biomes: {
+    nightCity: {
+      name: "Night City",
+      description: "Cyberpunk-themed drops. Welcome to the streets.",
+    },
+    leonida: {
+      name: "Leonida",
+      description: "Sun, neon, and chaos. Coming soon.",
+    },
+  },
+
   shop: {
     available: "Available",
     buy: "Buy",
